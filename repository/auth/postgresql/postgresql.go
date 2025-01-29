@@ -21,12 +21,36 @@ func (q *AuthRepositoryImpl) CreateUserQuery(createUser model.CreateUser) (*mode
 		RETURNING id, name
 	`
 
-	var userId model.UserId
-	var userName model.UserName
+	var resultUserId model.UserId
+	var resultUserName model.UserName
 
-	err := q.DB.QueryRow(query, createUser).Scan(&userId, &userName)
+	err := q.DB.QueryRow(query, createUser).Scan(&resultUserId, &resultUserName)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user: %w", err)
 	}
-	return &userId, nil
+	if resultUserName != createUser.UserName {
+		return nil, fmt.Errorf("auth_id mismatch: expected %v, got %v", createUser.UserName, resultUserName)
+	}
+	return &resultUserId, nil
 }
+
+func (q *AuthRepositoryImpl) FetchUserQuery(authId model.AuthId) (*model.UserId, error) {
+	query := `
+		SELECT user_id,auth_id
+		FROM user
+		WHERE auth_id = $1
+	`
+
+	var resultUserId model.UserId
+	var resultAuthId model.AuthId
+
+	err := q.DB.QueryRow(query, authId).Scan(&resultUserId, &resultAuthId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create user: %w", err)
+	}
+	if resultAuthId != authId {
+		return nil, fmt.Errorf("auth_id mismatch: expected %v, got %v", authId, resultAuthId)
+	}
+	return &resultUserId, nil
+}
+
