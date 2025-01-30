@@ -2,7 +2,7 @@ package model
 
 type UserName string
 
-type UserId string
+type UserId int
 
 type AuthId string
 
