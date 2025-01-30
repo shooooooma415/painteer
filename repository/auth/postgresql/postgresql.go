@@ -44,7 +44,7 @@ func (q *AuthRepositoryImpl) CreateUser(createUser model.CreateUser) (*model.Use
 func (q *AuthRepositoryImpl) FindUserByID(authId model.AuthId) (*model.User, error) {
 	query := `
 		SELECT *
-		FROM user
+		FROM users
 		WHERE auth_id = $1
 	`
 
