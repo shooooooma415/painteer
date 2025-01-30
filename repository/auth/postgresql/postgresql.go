@@ -16,15 +16,15 @@ func NewAuthRepository(db *sql.DB) *AuthRepositoryImpl {
 
 func (q *AuthRepositoryImpl) CreateUserQuery(createUser model.CreateUser) (*model.UserId, error) {
 	query := `
-		INSERT INTO users (name,icon,auth_id) 
-		VALUES ($1,$2,$3)
+		INSERT INTO users (name, icon, auth_id) 
+		VALUES ($1, $2, $3)
 		RETURNING id, name
 	`
 
 	var resultUserId model.UserId
 	var resultUserName model.UserName
 
-	err := q.DB.QueryRow(query, createUser).Scan(&resultUserId, &resultUserName)
+	err := q.DB.QueryRow(query, createUser.UserName, createUser.Icon, createUser.AuthId).Scan(&resultUserId, &resultUserName)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user: %w", err)
 	}
