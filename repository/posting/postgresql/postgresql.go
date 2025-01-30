@@ -5,10 +5,10 @@ import (
 	"painteer/model"
 )
 
-type PostingRepositoryImpl struct {
+type PostRepositoryImpl struct {
 	DB *sql.DB
 }
 
-func NewPostingRepository(db *sql.DB) *PostingRepositoryImpl {
-	return &PostingRepositoryImpl{DB: db}
+func NewPostRepository(db *sql.DB) *PostRepositoryImpl {
+	return &PostRepositoryImpl{DB: db}
 }

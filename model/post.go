@@ -2,11 +2,11 @@ package model
 
 import "time"
 
-type PostingId int
+type PostId int
 type PrefectureId int
 
-type Posting struct {
-	PostingId PostingId
+type Post struct {
+	PostingId PostId
 	Image     string
 	Date      time.Time
 	Comment   string
@@ -16,7 +16,7 @@ type Posting struct {
 	UserID    UserId
 }
 
-type CreatePosting struct {
+type CreatePost struct {
 	Image     string
 	Date      time.Time
 	Comment   string
@@ -27,7 +27,7 @@ type CreatePosting struct {
 	Groups    []GroupId
 }
 
-type SelectPosting struct {
+type SelectPost struct {
 	PrefectureId PrefectureId
 	Groups       []GroupId
 }
