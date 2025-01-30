@@ -6,6 +6,7 @@ import (
 	setupDB "painteer/repository/utils"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	_ "github.com/lib/pq"
 )
 
@@ -66,17 +67,8 @@ func TestCreateAndFindUserByUserID(t *testing.T) {
 				t.Fatalf("FindUserByID() error = %v", err)
 			}
 
-			if gotUser.UserId != tc.want.UserId {
-				t.Errorf("FindUserByID() UserId = %v, want %v", gotUser.UserId, tc.want.UserId)
-			}
-			if gotUser.UserName != tc.want.UserName {
-				t.Errorf("FindUserByID() UserName = %v, want %v", gotUser.UserName, tc.want.UserName)
-			}
-			if gotUser.AuthId != tc.want.AuthId {
-				t.Errorf("FindUserByID() AuthId = %v, want %v", gotUser.AuthId, tc.want.AuthId)
-			}
-			if gotUser.Icon != tc.want.Icon {
-				t.Errorf("FindUserByID() Icon = %v, want %v", gotUser.Icon, tc.want.Icon)
+			if diff := cmp.Diff(tc.want, *gotUser); diff != "" {
+				t.Errorf("FindUserByUserID() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
@@ -139,17 +131,8 @@ func TestCreateAndFindUserByAuthID(t *testing.T) {
 				t.Fatalf("FindUserByID() error = %v", err)
 			}
 
-			if gotUser.UserId != tc.want.UserId {
-				t.Errorf("FindUserByID() UserId = %v, want %v", gotUser.UserId, tc.want.UserId)
-			}
-			if gotUser.UserName != tc.want.UserName {
-				t.Errorf("FindUserByID() UserName = %v, want %v", gotUser.UserName, tc.want.UserName)
-			}
-			if gotUser.AuthId != tc.want.AuthId {
-				t.Errorf("FindUserByID() AuthId = %v, want %v", gotUser.AuthId, tc.want.AuthId)
-			}
-			if gotUser.Icon != tc.want.Icon {
-				t.Errorf("FindUserByID() Icon = %v, want %v", gotUser.Icon, tc.want.Icon)
+			if diff := cmp.Diff(tc.want, *gotUser); diff != "" {
+				t.Errorf("FindUserByAuthID() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
