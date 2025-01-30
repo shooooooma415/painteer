@@ -11,3 +11,10 @@ type CreateUser struct {
 	Icon     string
 	AuthId   AuthId
 }
+
+type User struct {
+	UserName UserName
+	Icon     string
+	AuthId   AuthId
+	UserId   UserId
+}
