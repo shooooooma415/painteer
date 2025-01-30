@@ -61,22 +61,40 @@ func TestCreateAndFindUser(t *testing.T) {
 
 			tc.want.UserId = createdUser.UserId
 
-			gotUser, err := repository.FindUserByAuthID(tc.createUser.AuthId)
+			gotUserByAuthID, err := repository.FindUserByAuthID(tc.createUser.AuthId)
 			if err != nil {
 				t.Fatalf("FindUserByID() error = %v", err)
 			}
 
-			if gotUser.UserId != tc.want.UserId {
-				t.Errorf("FindUserByID() UserId = %v, want %v", gotUser.UserId, tc.want.UserId)
+			if gotUserByAuthID.UserId != tc.want.UserId {
+				t.Errorf("FindUserByID() UserId = %v, want %v", gotUserByAuthID.UserId, tc.want.UserId)
 			}
-			if gotUser.UserName != tc.want.UserName {
-				t.Errorf("FindUserByID() UserName = %v, want %v", gotUser.UserName, tc.want.UserName)
+			if gotUserByAuthID.UserName != tc.want.UserName {
+				t.Errorf("FindUserByID() UserName = %v, want %v", gotUserByAuthID.UserName, tc.want.UserName)
 			}
-			if gotUser.AuthId != tc.want.AuthId {
-				t.Errorf("FindUserByID() AuthId = %v, want %v", gotUser.AuthId, tc.want.AuthId)
+			if gotUserByAuthID.AuthId != tc.want.AuthId {
+				t.Errorf("FindUserByID() AuthId = %v, want %v", gotUserByAuthID.AuthId, tc.want.AuthId)
 			}
-			if gotUser.Icon != tc.want.Icon {
-				t.Errorf("FindUserByID() Icon = %v, want %v", gotUser.Icon, tc.want.Icon)
+			if gotUserByAuthID.Icon != tc.want.Icon {
+				t.Errorf("FindUserByID() Icon = %v, want %v", gotUserByAuthID.Icon, tc.want.Icon)
+			}
+
+			gotUserByUserID, err := repository.FindUserByUserID(createdUser.UserId)
+			if err != nil {
+				t.Fatalf("FindUserByID() error = %v", err)
+			}
+
+			if gotUserByUserID.UserId != tc.want.UserId {
+				t.Errorf("FindUserByID() UserId = %v, want %v", gotUserByUserID.UserId, tc.want.UserId)
+			}
+			if gotUserByUserID.UserName != tc.want.UserName {
+				t.Errorf("FindUserByID() UserName = %v, want %v", gotUserByUserID.UserName, tc.want.UserName)
+			}
+			if gotUserByUserID.AuthId != tc.want.AuthId {
+				t.Errorf("FindUserByID() AuthId = %v, want %v", gotUserByUserID.AuthId, tc.want.AuthId)
+			}
+			if gotUserByUserID.Icon != tc.want.Icon {
+				t.Errorf("FindUserByID() Icon = %v, want %v", gotUserByUserID.Icon, tc.want.Icon)
 			}
 		})
 	}
