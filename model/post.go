@@ -6,25 +6,27 @@ type PostId int
 type PrefectureId int
 
 type Post struct {
-	PostingId PostId
-	Image     string
-	Date      time.Time
-	Comment   string
-	Region    string
-	Longitude float64
-	Latitude  float64
-	UserID    UserId
+	PostingId    PostId
+	PrefectureId PrefectureId
+	Image        string
+	Date         time.Time
+	Comment      string
+	Region       string
+	Longitude    float64
+	Latitude     float64
+	UserID       UserId
 }
 
-type CreatePost struct {
-	Image     string
-	Date      time.Time
-	Comment   string
-	Region    string
-	Longitude float64
-	Latitude  float64
-	UserID    UserId
-	Groups    []GroupId
+type UploadPost struct {
+	Image        string
+	Date         time.Time
+	Comment      string
+	PrefectureId PrefectureId
+	Region       string
+	Longitude    float64
+	Latitude     float64
+	UserID       UserId
+	Groups       []GroupId
 }
 
 type SelectPost struct {
