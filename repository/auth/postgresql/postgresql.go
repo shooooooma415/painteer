@@ -14,24 +14,20 @@ func NewAuthRepository(db *sql.DB) *AuthRepositoryImpl {
 	return &AuthRepositoryImpl{DB: db}
 }
 
-func (q *AuthRepositoryImpl) CreateUser(createUser model.CreateUser) (*model.UserId, error) {
+func (q *AuthRepositoryImpl) CreateUser(createUser model.CreateUser) (*model.User, error) {
 	query := `
 		INSERT INTO users (name, icon, auth_id) 
 		VALUES ($1, $2, $3)
-		RETURNING id, name
+		RETURNING *
 	`
 
-	var resultUserId model.UserId
-	var resultUserName model.UserName
+	var resultUser model.User
 
-	err := q.DB.QueryRow(query, createUser.UserName, createUser.Icon, createUser.AuthId).Scan(&resultUserId, &resultUserName)
+	err := q.DB.QueryRow(query, createUser.UserName, createUser.Icon, createUser.AuthId).Scan(&resultUser.UserId, &resultUser.UserName,&resultUser.AuthId,&resultUser.Icon)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user: %w", err)
 	}
-	if resultUserName != createUser.UserName {
-		return nil, fmt.Errorf("auth_id mismatch: expected %v, got %v", createUser.UserName, resultUserName)
-	}
-	return &resultUserId, nil
+	return &resultUser, nil
 }
 
 func (q *AuthRepositoryImpl) FetchUserQuery(authId model.AuthId) (*model.UserId, error) {
