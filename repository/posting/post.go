@@ -1,8 +1,9 @@
-package auth
+package post
 
 import "painteer/model"
 
 type PostingsRepository interface {
-	CreatePosting(user model.CreateUser) (*model.User, error)
-	SignInUser(authId model.AuthId) (*model.User, error)
+	UploadPost(uploadPost model.UploadPost) (*model.Post, error)
+	DeletePost(postId model.PostId) (*model.PostId, error)
+	SelectPost(selectPost model.SelectPost)(model.Post,error)
 }
