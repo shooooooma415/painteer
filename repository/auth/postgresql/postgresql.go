@@ -14,7 +14,7 @@ func NewAuthRepository(db *sql.DB) *AuthRepositoryImpl {
 	return &AuthRepositoryImpl{DB: db}
 }
 
-func (q *AuthRepositoryImpl) CreateUserQuery(createUser model.CreateUser) (*model.UserId, error) {
+func (q *AuthRepositoryImpl) CreateUser(createUser model.CreateUser) (*model.UserId, error) {
 	query := `
 		INSERT INTO users (name, icon, auth_id) 
 		VALUES ($1, $2, $3)

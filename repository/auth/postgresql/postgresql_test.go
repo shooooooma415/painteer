@@ -35,7 +35,7 @@ func TestCreateUserQuery(t *testing.T) {
 			defer db.Close()
 
 			repository := postgresql.NewAuthRepository(db)
-			got, err := repository.CreateUserQuery(tc.createUser)
+			got, err := repository.CreateUser(tc.createUser)
 
 			if err != nil {
 				t.Fatalf("CreateUserQuery() error = %v", err)
