@@ -11,10 +11,9 @@ type Post struct {
 	Image        string
 	Date         time.Time
 	Comment      string
-	Region       string
 	Longitude    float64
 	Latitude     float64
-	UserID       UserId
+	UserId       UserId
 	Groups       []GroupId
 }
 
@@ -25,7 +24,7 @@ type UploadPost struct {
 	PrefectureId PrefectureId
 	Longitude    float64
 	Latitude     float64
-	UserID       UserId
+	UserId       UserId
 	Groups       []GroupId
 }
 

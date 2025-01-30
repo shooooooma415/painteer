@@ -28,7 +28,7 @@ func (q *PostRepositoryImpl) UploadPost(uploadPost model.UploadPost) (*model.Pos
 		INSERT INTO public_setting (post_id, group_id)
 		SELECT uploaded_post.id, unnest($8::int[])
 		FROM uploaded_post
-		RETURNING *;
+		RETURNING *
 	`
 
 	var uploadedPost model.Post
@@ -37,7 +37,7 @@ func (q *PostRepositoryImpl) UploadPost(uploadPost model.UploadPost) (*model.Pos
 		uploadPost.Image,
 		uploadPost.Comment,
 		uploadPost.PrefectureId,
-		uploadPost.UserID,
+		uploadPost.UserId,
 		uploadPost.Date,
 		uploadPost.Longitude,
 		uploadPost.Latitude,
@@ -47,7 +47,7 @@ func (q *PostRepositoryImpl) UploadPost(uploadPost model.UploadPost) (*model.Pos
 		&uploadedPost.Image,
 		&uploadedPost.Comment,
 		&uploadedPost.PrefectureId,
-		&uploadedPost.UserID,
+		&uploadedPost.UserId,
 		&uploadedPost.Date,
 		&uploadedPost.Longitude,
 		&uploadedPost.Latitude,
@@ -79,7 +79,7 @@ func (q *PostRepositoryImpl) DeletePost(postId model.PostId) (*model.Post, error
 		&deletedPost.Image,
 		&deletedPost.Comment,
 		&deletedPost.PrefectureId,
-		&deletedPost.UserID,
+		&deletedPost.UserId,
 		&deletedPost.Date,
 		&deletedPost.Longitude,
 		&deletedPost.Latitude,
@@ -89,4 +89,39 @@ func (q *PostRepositoryImpl) DeletePost(postId model.PostId) (*model.Post, error
 	}
 
 	return &deletedPost, nil
+}
+
+func (q *PostRepositoryImpl) SelectPost(selectPost model.SelectPost) (*model.Post, error) {
+	query := `
+		SELECT 
+			p.id, p.image, p.comment, p.prefecture_id, 
+			p.user_id, p.date, p.longitude, p.latitude
+		FROM posts p
+		INNER JOIN public_setting ps
+		ON p.id = ps.post_id
+		WHERE p.prefecture_id = $1
+		AND ps.group_id = ANY($2::int[])
+	`
+
+	var selectedPost model.Post
+	err := q.DB.QueryRow(
+		query,
+		selectPost.PrefectureId,
+		pq.Array(selectPost.Groups), // `[]int` を PostgreSQL の `int[]` 型として渡す
+	).Scan(
+		&selectedPost.PostId,
+		&selectedPost.Image,
+		&selectedPost.Comment,
+		&selectedPost.PrefectureId,
+		&selectedPost.UserId,
+		&selectedPost.Date,
+		&selectedPost.Longitude,
+		&selectedPost.Latitude,
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to select post: %w", err)
+	}
+
+	return &selectedPost, nil
 }
