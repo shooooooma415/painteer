@@ -41,7 +41,7 @@ func (q *AuthRepositoryImpl) CreateUser(createUser model.CreateUser) (*model.Use
 	return &resultUser, nil
 }
 
-func (q *AuthRepositoryImpl) FindUserByID(authId model.AuthId) (*model.User, error) {
+func (q *AuthRepositoryImpl) FindUserByAuthID(authId model.AuthId) (*model.User, error) {
 	query := `
 		SELECT *
 		FROM users
@@ -65,3 +65,4 @@ func (q *AuthRepositoryImpl) FindUserByID(authId model.AuthId) (*model.User, err
 	}
 	return &resultUser, nil
 }
+

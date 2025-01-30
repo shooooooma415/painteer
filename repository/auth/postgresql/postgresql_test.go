@@ -61,7 +61,7 @@ func TestCreateAndFindUser(t *testing.T) {
 
 			tc.want.UserId = createdUser.UserId
 
-			gotUser, err := repository.FindUserByID(tc.createUser.AuthId)
+			gotUser, err := repository.FindUserByAuthID(tc.createUser.AuthId)
 			if err != nil {
 				t.Fatalf("FindUserByID() error = %v", err)
 			}
