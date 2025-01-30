@@ -6,7 +6,7 @@ type PostId int
 type PrefectureId int
 
 type Post struct {
-	PostingId    PostId
+	PostId    PostId
 	PrefectureId PrefectureId
 	Image        string
 	Date         time.Time
@@ -15,6 +15,7 @@ type Post struct {
 	Longitude    float64
 	Latitude     float64
 	UserID       UserId
+	Groups       []GroupId
 }
 
 type UploadPost struct {
@@ -22,7 +23,6 @@ type UploadPost struct {
 	Date         time.Time
 	Comment      string
 	PrefectureId PrefectureId
-	Region       string
 	Longitude    float64
 	Latitude     float64
 	UserID       UserId
