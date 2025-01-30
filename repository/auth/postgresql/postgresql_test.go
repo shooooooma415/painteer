@@ -9,7 +9,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func TestCreateUserQuery(t *testing.T) {
+func TestCreateUser(t *testing.T) {
 	testCases := []struct {
 		name       string
 		createUser model.CreateUser
@@ -49,7 +49,7 @@ func TestCreateUserQuery(t *testing.T) {
 	}
 }
 
-func TestFetchUserQuery(t *testing.T){
+func TestFindUserByID(t *testing.T){
 	testCases :=[]struct{
 		name string
 		authId model.AuthId

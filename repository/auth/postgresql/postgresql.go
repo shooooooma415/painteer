@@ -30,7 +30,7 @@ func (q *AuthRepositoryImpl) CreateUser(createUser model.CreateUser) (*model.Use
 	return &resultUser, nil
 }
 
-func (q *AuthRepositoryImpl) FetchUserQuery(authId model.AuthId) (*model.UserId, error) {
+func (q *AuthRepositoryImpl) FindUserByID(authId model.AuthId) (*model.UserId, error) {
 	query := `
 		SELECT user_id, auth_id
 		FROM user
