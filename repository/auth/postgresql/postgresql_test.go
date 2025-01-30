@@ -61,22 +61,22 @@ func TestCreateAndFindUser(t *testing.T) {
 
 			tc.want.UserId = createdUser.UserId
 
-			foundUser, err := repository.FindUserByID(tc.createUser.AuthId)
+			gotUser, err := repository.FindUserByID(tc.createUser.AuthId)
 			if err != nil {
 				t.Fatalf("FindUserByID() error = %v", err)
 			}
 
-			if foundUser.UserId != tc.want.UserId {
-				t.Errorf("FindUserByID() UserId = %v, want %v", foundUser.UserId, tc.want.UserId)
+			if gotUser.UserId != tc.want.UserId {
+				t.Errorf("FindUserByID() UserId = %v, want %v", gotUser.UserId, tc.want.UserId)
 			}
-			if foundUser.UserName != tc.want.UserName {
-				t.Errorf("FindUserByID() UserName = %v, want %v", foundUser.UserName, tc.want.UserName)
+			if gotUser.UserName != tc.want.UserName {
+				t.Errorf("FindUserByID() UserName = %v, want %v", gotUser.UserName, tc.want.UserName)
 			}
-			if foundUser.AuthId != tc.want.AuthId {
-				t.Errorf("FindUserByID() AuthId = %v, want %v", foundUser.AuthId, tc.want.AuthId)
+			if gotUser.AuthId != tc.want.AuthId {
+				t.Errorf("FindUserByID() AuthId = %v, want %v", gotUser.AuthId, tc.want.AuthId)
 			}
-			if foundUser.Icon != tc.want.Icon {
-				t.Errorf("FindUserByID() Icon = %v, want %v", foundUser.Icon, tc.want.Icon)
+			if gotUser.Icon != tc.want.Icon {
+				t.Errorf("FindUserByID() Icon = %v, want %v", gotUser.Icon, tc.want.Icon)
 			}
 		})
 	}
