@@ -66,3 +66,27 @@ func (q *AuthRepositoryImpl) FindUserByAuthID(authId model.AuthId) (*model.User,
 	return &resultUser, nil
 }
 
+func (q *AuthRepositoryImpl) FindUserByUserID(userId model.UserId) (*model.User, error) {
+	query := `
+		SELECT *
+		FROM users
+		WHERE user_id = $1
+	`
+
+	var resultUser model.User
+
+	err := q.DB.QueryRow(
+		query,
+		userId,
+	).Scan(
+		&resultUser.UserId,
+		&resultUser.UserName,
+		&resultUser.AuthId,
+		&resultUser.Icon,
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to create user: %w", err)
+	}
+	return &resultUser, nil
+}
