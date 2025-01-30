@@ -1,7 +1,6 @@
 package postgresql_test
 
 import (
-	"fmt"
 	"painteer/model"
 	postgresql "painteer/repository/auth/postgresql"
 	setupDB "painteer/repository/utils"
@@ -79,9 +78,6 @@ func TestCreateAndFindUser(t *testing.T) {
 			if foundUser.Icon != tc.want.Icon {
 				t.Errorf("FindUserByID() Icon = %v, want %v", foundUser.Icon, tc.want.Icon)
 			}
-
-			fmt.Printf("Test Passed: %s | Created UserID = %v, Found UserID = %v\n",
-				tc.name, tc.want.UserId, foundUser.UserId)
 		})
 	}
 }
