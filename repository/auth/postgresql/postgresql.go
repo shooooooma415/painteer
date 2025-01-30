@@ -70,7 +70,7 @@ func (q *AuthRepositoryImpl) FindUserByUserID(userId model.UserId) (*model.User,
 	query := `
 		SELECT *
 		FROM users
-		WHERE user_id = $1
+		WHERE id = $1
 	`
 
 	var resultUser model.User
