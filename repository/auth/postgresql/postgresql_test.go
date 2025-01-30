@@ -13,10 +13,16 @@ func TestCreateUser(t *testing.T) {
 	testCases := []struct {
 		name       string
 		createUser model.CreateUser
+		want       model.User
 	}{
 		{
 			name: "正常にユーザーを作成する",
 			createUser: model.CreateUser{
+				UserName: "hoge",
+				Icon:     "hogehoge",
+				AuthId:   "auth_hoge",
+			},
+			want: model.User{
 				UserName: "hoge",
 				Icon:     "hogehoge",
 				AuthId:   "auth_hoge",
@@ -37,24 +43,18 @@ func TestCreateUser(t *testing.T) {
 			repository := postgresql.NewAuthRepository(db)
 			got, err := repository.CreateUser(tc.createUser)
 
-			want := model.User{
-				UserName: tc.createUser.UserName,
-				Icon:     tc.createUser.Icon,
-				AuthId:   tc.createUser.AuthId,
-			}
-
 			if err != nil {
 				t.Fatalf("CreateUserQuery() error = %v", err)
 			}
 
-			if got.UserName != want.UserName {
-				t.Errorf("CreateUser() UserName = %v, want %v", got.UserName, want.UserName)
+			if got.UserName != tc.want.UserName {
+				t.Errorf("CreateUser() UserName = %v, want %v", got.UserName, tc.want.UserName)
 			}
-			if got.AuthId != want.AuthId {
-				t.Errorf("CreateUser() AuthId = %v, want %v", got.AuthId, want.AuthId)
+			if got.AuthId != tc.want.AuthId {
+				t.Errorf("CreateUser() AuthId = %v, want %v", got.AuthId, tc.want.AuthId)
 			}
-			if got.Icon != want.Icon {
-				t.Errorf("CreateUser() Icon = %v, want %v", got.Icon, want.Icon)
+			if got.Icon != tc.want.Icon {
+				t.Errorf("CreateUser() Icon = %v, want %v", got.Icon, tc.want.Icon)
 			}
 
 		})
