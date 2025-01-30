@@ -48,3 +48,13 @@ func TestCreateUserQuery(t *testing.T) {
 		})
 	}
 }
+
+func TestFetchUserQuery(t *testing.T){
+	testCases :=[]struct{
+		name string
+		authId model.AuthId
+	}{
+		name:"authIdを元に正常にuserIdを取得する",
+		authId:"hoge",
+	}
+}

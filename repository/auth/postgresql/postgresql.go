@@ -36,7 +36,7 @@ func (q *AuthRepositoryImpl) CreateUserQuery(createUser model.CreateUser) (*mode
 
 func (q *AuthRepositoryImpl) FetchUserQuery(authId model.AuthId) (*model.UserId, error) {
 	query := `
-		SELECT user_id,auth_id
+		SELECT user_id, auth_id
 		FROM user
 		WHERE auth_id = $1
 	`
