@@ -50,17 +50,11 @@ func TestCreateAndFindUserByUserID(t *testing.T) {
 				t.Fatal("CreateUser() returned nil, expected valid User")
 			}
 
-			if createdUser.UserName != tc.want.UserName {
-				t.Errorf("CreateUser() UserName = %v, want %v", createdUser.UserName, tc.want.UserName)
-			}
-			if createdUser.AuthId != tc.want.AuthId {
-				t.Errorf("CreateUser() AuthId = %v, want %v", createdUser.AuthId, tc.want.AuthId)
-			}
-			if createdUser.Icon != tc.want.Icon {
-				t.Errorf("CreateUser() Icon = %v, want %v", createdUser.Icon, tc.want.Icon)
-			}
-
 			tc.want.UserId = createdUser.UserId
+			
+			if diff := cmp.Diff(tc.want, *createdUser); diff != "" {
+				t.Errorf("CreateUser() mismatch (-want +got):\n%s", diff)
+			}
 
 			gotUser, err := repository.FindUserByUserID(createdUser.UserId)
 			if err != nil {
@@ -114,17 +108,11 @@ func TestCreateAndFindUserByAuthID(t *testing.T) {
 				t.Fatal("CreateUser() returned nil, expected valid User")
 			}
 
-			if createdUser.UserName != tc.want.UserName {
-				t.Errorf("CreateUser() UserName = %v, want %v", createdUser.UserName, tc.want.UserName)
-			}
-			if createdUser.AuthId != tc.want.AuthId {
-				t.Errorf("CreateUser() AuthId = %v, want %v", createdUser.AuthId, tc.want.AuthId)
-			}
-			if createdUser.Icon != tc.want.Icon {
-				t.Errorf("CreateUser() Icon = %v, want %v", createdUser.Icon, tc.want.Icon)
-			}
-
 			tc.want.UserId = createdUser.UserId
+
+			if diff := cmp.Diff(tc.want, *createdUser); diff != "" {
+				t.Errorf("CreateUser() mismatch (-want +got):\n%s", diff)
+			}
 
 			gotUser, err := repository.FindUserByAuthID(tc.createUser.AuthId)
 			if err != nil {
