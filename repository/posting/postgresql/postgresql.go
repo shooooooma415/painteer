@@ -16,7 +16,7 @@ func NewPostRepository(db *sql.DB) *PostRepositoryImpl {
 	return &PostRepositoryImpl{DB: db}
 }
 
-func (q *PostRepositoryImpl) UploadPost(uploadPost model.UploadPost) (*model.Post, error) {
+func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.Post, error) {
 	query := `
 		WITH uploaded_post AS (
 			INSERT INTO posts (
