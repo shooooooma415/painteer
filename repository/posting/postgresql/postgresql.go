@@ -49,26 +49,19 @@ func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.Pos
 func (q *PostRepositoryImpl) DeletePost(deletePost model.DeletePost) (*model.PostId, error) {
 	query := `
 		DELETE FROM posts
-		WHERE id = $1
+		WHERE id = $1 AND user_id = $2
 		RETURNING id
 		`
 
-	var deletedPost model.Post
-	err := q.DB.QueryRow(query, postId).Scan(
-		&deletedPost.PostId,
-		&deletedPost.Image,
-		&deletedPost.Comment,
-		&deletedPost.PrefectureId,
-		&deletedPost.UserId,
-		&deletedPost.Date,
-		&deletedPost.Longitude,
-		&deletedPost.Latitude,
+	var deletedPostId model.PostId
+	err := q.DB.QueryRow(query, deletePost.PostId,deletePost.UserId).Scan(
+		&deletedPostId,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to delete post: %w", err)
 	}
 
-	return &deletedPost, nil
+	return &deletedPostId, nil
 }
 
 func (q *PostRepositoryImpl) SelectPost(selectPost model.SelectPost) (*model.Post, error) {
