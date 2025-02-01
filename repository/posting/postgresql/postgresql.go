@@ -14,16 +14,16 @@ func NewPostRepository(db *sql.DB) *PostRepositoryImpl {
 	return &PostRepositoryImpl{DB: db}
 }
 
-func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.PostId, error) {
+func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.Post, error) {
 	query := `
 		INSERT INTO posts (
 				image, comment, prefecture_id, user_id, date, longitude, latitude
 			)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
-		RETURNING id
+		RETURNING *
 	`
 
-	var uploadedPostId model.PostId
+	var uploadedPost model.Post
 	err := q.DB.QueryRow(
 		query,
 		uploadPost.Image,
@@ -34,14 +34,21 @@ func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.Pos
 		uploadPost.Longitude,
 		uploadPost.Latitude,
 	).Scan(
-		&uploadedPostId,
+		&uploadedPost.PostId,
+		&uploadedPost.Image,
+		&uploadedPost.Comment,
+		&uploadedPost.PrefectureId,
+		&uploadedPost.UserId,
+		&uploadedPost.Date,
+		&uploadedPost.Longitude,
+		&uploadedPost.Latitude,
 	)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to upload post: %w", err)
 	}
 
-	return &uploadedPostId, nil
+	return &uploadedPost, nil
 }
 
 func (q *PostRepositoryImpl) DeletePost(deletePost model.DeletePost) (*model.PostId, error) {
