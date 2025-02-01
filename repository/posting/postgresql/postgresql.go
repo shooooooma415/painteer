@@ -4,8 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"painteer/model"
-
-	"github.com/lib/pq"
 )
 
 type PostRepositoryImpl struct {
@@ -54,7 +52,7 @@ func (q *PostRepositoryImpl) DeletePost(deletePost model.DeletePost) (*model.Pos
 		`
 
 	var deletedPostId model.PostId
-	err := q.DB.QueryRow(query, deletePost.PostId,deletePost.UserId).Scan(
+	err := q.DB.QueryRow(query, deletePost.PostId, deletePost.UserId).Scan(
 		&deletedPostId,
 	)
 	if err != nil {
