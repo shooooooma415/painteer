@@ -3,7 +3,7 @@ package post
 import "painteer/model"
 
 type PostingsRepository interface {
-	UploadPost(uploadPost model.UploadPost) (*model.Post, error)
-	DeletePost(postId model.PostId) (*model.Post, error)
-	SelectPost(selectPost model.SelectPost)(model.Post,error)
+	UploadPost(uploadPost model.UploadPost) (*model.PostId, error)
+	DeletePost(postId model.PostId) (*model.PostId, error)
+	FetchPost(postId model.PostId) (*model.Post, error)
 }

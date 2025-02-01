@@ -61,3 +61,19 @@ func (q *PostRepositoryImpl) DeletePost(deletePost model.DeletePost) (*model.Pos
 
 	return &deletedPostId, nil
 }
+
+func (q *PostRepositoryImpl) FetchPost(postId model.PostId) (*model.Post, error) {
+	query := `
+		SELECT *
+		FROM posts
+		WHERE id = $1
+	`
+
+	var fetchedPost model.Post
+	err := q.DB.QueryRow(query, postId).Scan(&fetchedPost)
+	if err != nil {
+		return nil, fmt.Errorf("failed to delete post: %w", err)
+	}
+
+	return &fetchedPost, nil
+}
