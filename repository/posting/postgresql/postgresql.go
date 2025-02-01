@@ -16,16 +16,16 @@ func NewPostRepository(db *sql.DB) *PostRepositoryImpl {
 	return &PostRepositoryImpl{DB: db}
 }
 
-func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.Post, error) {
+func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.PostId, error) {
 	query := `
 		INSERT INTO posts (
 				image, comment, prefecture_id, user_id, date, longitude, latitude
 			)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
-		RETURNING *
+		RETURNING id
 	`
 
-	var uploadedPost model.Post
+	var uploadedPostId model.PostId
 	err := q.DB.QueryRow(
 		query,
 		uploadPost.Image,
@@ -36,35 +36,22 @@ func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.Pos
 		uploadPost.Longitude,
 		uploadPost.Latitude,
 	).Scan(
-		&uploadedPost.PostId,
-		&uploadedPost.Image,
-		&uploadedPost.Comment,
-		&uploadedPost.PrefectureId,
-		&uploadedPost.UserId,
-		&uploadedPost.Date,
-		&uploadedPost.Longitude,
-		&uploadedPost.Latitude,
+		&uploadedPostId,
 	)
-	
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to upload post: %w", err)
 	}
 
-	return &uploadedPost, nil
+	return &uploadedPostId, nil
 }
 
-func (q *PostRepositoryImpl) DeletePost(postId model.PostId) (*model.Post, error) {
+func (q *PostRepositoryImpl) DeletePost(deletePost model.DeletePost) (*model.PostId, error) {
 	query := `
-		WITH deleted_posts AS (
-			DELETE FROM posts
-			WHERE id = $1
-			RETURNING id, image, comment, prefecture_id, user_id, date, longitude, latitude
-		), deleted_settings AS (
-			DELETE FROM public_setting
-			WHERE post_id IN (SELECT id FROM deleted_posts)
-		)
-		SELECT id, image, comment, prefecture_id, user_id, date, longitude, latitude FROM deleted_posts;
-	`
+		DELETE FROM posts
+		WHERE id = $1
+		RETURNING id
+		`
 
 	var deletedPost model.Post
 	err := q.DB.QueryRow(query, postId).Scan(
