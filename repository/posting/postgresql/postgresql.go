@@ -18,16 +18,10 @@ func NewPostRepository(db *sql.DB) *PostRepositoryImpl {
 
 func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.Post, error) {
 	query := `
-		WITH uploaded_post AS (
-			INSERT INTO posts (
+		INSERT INTO posts (
 				image, comment, prefecture_id, user_id, date, longitude, latitude
 			)
-			VALUES ($1, $2, $3, $4, $5, $6, $7)
-			RETURNING id
-		)
-		INSERT INTO public_setting (post_id, group_id)
-		SELECT uploaded_post.id, unnest($8::int[])
-		FROM uploaded_post
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING *
 	`
 
@@ -41,7 +35,6 @@ func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.Pos
 		uploadPost.Date,
 		uploadPost.Longitude,
 		uploadPost.Latitude,
-		pq.Array(uploadPost.Groups), // `[]GroupId` を PostgreSQL の int[]型として渡せるらしい
 	).Scan(
 		&uploadedPost.PostId,
 		&uploadedPost.Image,
@@ -51,8 +44,8 @@ func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.Pos
 		&uploadedPost.Date,
 		&uploadedPost.Longitude,
 		&uploadedPost.Latitude,
-		&uploadedPost.Groups,
 	)
+	
 	if err != nil {
 		return nil, fmt.Errorf("failed to upload post: %w", err)
 	}

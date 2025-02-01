@@ -14,7 +14,6 @@ type Post struct {
 	Longitude    float64
 	Latitude     float64
 	UserId       UserId
-	Groups       []GroupId
 }
 
 type UploadPost struct {
