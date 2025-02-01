@@ -63,38 +63,3 @@ func (q *PostRepositoryImpl) DeletePost(deletePost model.DeletePost) (*model.Pos
 
 	return &deletedPostId, nil
 }
-
-func (q *PostRepositoryImpl) SelectPost(selectPost model.SelectPost) (*model.Post, error) {
-	query := `
-		SELECT 
-			p.id, p.image, p.comment, p.prefecture_id, 
-			p.user_id, p.date, p.longitude, p.latitude
-		FROM posts p
-		INNER JOIN public_setting ps
-		ON p.id = ps.post_id
-		WHERE p.prefecture_id = $1
-		AND ps.group_id = ANY($2::int[])
-	`
-
-	var selectedPost model.Post
-	err := q.DB.QueryRow(
-		query,
-		selectPost.PrefectureId,
-		pq.Array(selectPost.Groups), // `[]int` を PostgreSQL の `int[]` 型として渡す
-	).Scan(
-		&selectedPost.PostId,
-		&selectedPost.Image,
-		&selectedPost.Comment,
-		&selectedPost.PrefectureId,
-		&selectedPost.UserId,
-		&selectedPost.Date,
-		&selectedPost.Longitude,
-		&selectedPost.Latitude,
-	)
-
-	if err != nil {
-		return nil, fmt.Errorf("failed to select post: %w", err)
-	}
-
-	return &selectedPost, nil
-}
