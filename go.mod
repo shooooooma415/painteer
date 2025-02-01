@@ -3,6 +3,7 @@ module painteer
 go 1.23.3
 
 require (
+	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/jmoiron/sqlx v1.4.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/labstack/echo/v4 v4.13.3 // indirect
