@@ -6,7 +6,7 @@ type PostId int
 type PrefectureId int
 
 type Post struct {
-	PostId    PostId
+	PostId       PostId
 	PrefectureId PrefectureId
 	Image        string
 	Date         time.Time
@@ -24,10 +24,9 @@ type UploadPost struct {
 	Longitude    float64
 	Latitude     float64
 	UserId       UserId
-
 }
 
-type SelectPost struct {
-	PrefectureId PrefectureId
-	Groups       []GroupId
+type DeletePost struct {
+	PostId PostId
+	UserId UserId
 }
