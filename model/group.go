@@ -9,7 +9,7 @@ type Password string
 type Group struct {
 	GroupName GroupName
 	Icon      string
-	UserId    UserId
+	AuthorId  UserId
 	GroupId   GroupId
 }
 
@@ -17,7 +17,7 @@ type CreateGroup struct {
 	GroupName GroupName
 	Icon      string
 	Password  Password
-	UserId    UserId
+	AuthorId  UserId
 }
 
 type JoinGroup struct {
