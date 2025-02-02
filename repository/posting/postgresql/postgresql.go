@@ -69,7 +69,7 @@ func (q *PostRepositoryImpl) DeletePost(deletePost model.DeletePost) (*model.Pos
 	return &deletedPostId, nil
 }
 
-func (q *PostRepositoryImpl) FetchPost(postId model.PostId) (*model.Post, error) {
+func (q *PostRepositoryImpl) FindPostByID(postId model.PostId) (*model.Post, error) {
 	query := `
 		SELECT *
 		FROM posts
