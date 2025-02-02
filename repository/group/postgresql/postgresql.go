@@ -39,3 +39,7 @@ func (q *GroupRepositoryImpl) CreateGroup(createGroup model.CreateGroup) (*model
 	}
 	return &createdGroup, nil
 }
+
+func (q *GroupRepositoryImpl) JoinGroup(joinGroup model.JoinGroup)(*model.Group,error){
+	
+}
