@@ -14,8 +14,19 @@ type Group struct {
 	GroupId   GroupId
 }
 
+type CreateGroup struct {
+	GroupName GroupName
+	Icon      string
+	Password  Password
+	UserId    UserId
+}
+
 type JoinGroup struct {
 	UserId    UserId
 	GroupName GroupName
 	Password  Password
+}
+
+type FetchedGroup struct {
+	Groups []Group
 }
