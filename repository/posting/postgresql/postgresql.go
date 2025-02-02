@@ -77,7 +77,16 @@ func (q *PostRepositoryImpl) FetchPost(postId model.PostId) (*model.Post, error)
 	`
 
 	var fetchedPost model.Post
-	err := q.DB.QueryRow(query, postId).Scan(&fetchedPost)
+	err := q.DB.QueryRow(query, postId).Scan(
+		&fetchedPost.PostId,
+		&fetchedPost.Image,
+		&fetchedPost.Comment,
+		&fetchedPost.PrefectureId,
+		&fetchedPost.UserId,
+		&fetchedPost.Date,
+		&fetchedPost.Longitude,
+		&fetchedPost.Latitude,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to delete post: %w", err)
 	}

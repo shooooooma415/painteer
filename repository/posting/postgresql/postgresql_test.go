@@ -97,7 +97,7 @@ func TestCreateUserAndPostAndDeletePost(t *testing.T) {
 			createUser: model.CreateUser{
 				UserName: "hoge",
 				Icon:     "hoge",
-				AuthId:   "hogehogehoge",
+				AuthId:   "hogehogehoge1",
 			},
 			uploadPost: model.UploadPost{
 				Image:        "hoge",
@@ -171,6 +171,83 @@ func TestCreateUserAndPostAndDeletePost(t *testing.T) {
 	}
 }
 
-// func TestCreateUserAndPostAndFetchPost(t *testing.T) {
+func TestCreateUserAndPostAndFetchPost(t *testing.T) {
+	testCases := []struct {
+		name       string
+		createUser model.CreateUser
+		uploadPost model.UploadPost
+		want       model.Post
+	}{
+		{
+			name: "ユーザーの作成＆画像の投稿",
+			createUser: model.CreateUser{
+				UserName: "hoge",
+				Icon:     "hoge",
+				AuthId:   "hogehogehoge2",
+			},
+			uploadPost: model.UploadPost{
+				Image:        "hoge",
+				Date:         time.Date(2025, time.January, 30, 15, 4, 5, 0, time.UTC),
+				Comment:      "hogehoge",
+				PrefectureId: 1,
+				Longitude:    123.456,
+				Latitude:     123.456,
+			},
+			want: model.Post{
+				PrefectureId: 1,
+				Image:        "hoge",
+				Date:         time.Date(2025, time.January, 30, 15, 4, 5, 0, time.UTC),
+				Comment:      "hogehoge",
+				Longitude:    123.456,
+				Latitude:     123.456,
+			},
+		},
+	}
 
-// }
+	db, err := setupDB.ConnectDB()
+	if err != nil {
+		t.Fatalf("Failed to connect to the database: %v", err)
+	}
+	defer db.Close()
+
+	userRepository := userPostgresql.NewAuthRepository(db)
+	postRepository := postPostgresql.NewPostRepository(db)
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			createdUser, err := userRepository.CreateUser(tc.createUser)
+
+			if err != nil {
+				t.Fatalf("CreateUser() error = %v", err)
+			}
+			if createdUser == nil {
+				t.Fatal("CreateUser() returned nil, expected valid User")
+			}
+
+			tc.want.UserId = createdUser.UserId
+			tc.uploadPost.UserId = createdUser.UserId
+			createdPost, err := postRepository.CreatePost(tc.uploadPost)
+
+			if err != nil {
+				t.Fatalf("CreatePost() error = %v", err)
+			}
+
+			tc.want.PostId = createdPost.PostId
+
+			if diff := cmp.Diff(tc.want, *createdPost); diff != "" {
+				t.Errorf("CreatePost() mismatch (-want +got):\n%s", diff)
+			}
+
+			gotPost,err := postRepository.FetchPost(createdPost.PostId)
+
+			if err != nil {
+				t.Fatalf("FetchPost() error = %v", err)
+			}
+
+			if diff := cmp.Diff(tc.want, *gotPost); diff != "" {
+				t.Errorf("FetchPost() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
