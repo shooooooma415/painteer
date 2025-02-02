@@ -20,7 +20,7 @@ func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.Pos
 				image, comment, prefecture_id, user_id, date, longitude, latitude
 			)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
-		RETURNING *
+		RETURNING id, image, comment, prefecture_id, user_id, date, longitude, latitude
 	`
 
 	var uploadedPost model.Post

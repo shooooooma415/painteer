@@ -24,14 +24,14 @@ func TestCreateUserAndPost(t *testing.T) {
 			createUser: model.CreateUser{
 				UserName: "hoge",
 				Icon:     "hoge",
-				AuthId:   "hogehogehoge",
+				AuthId:   "hogehogehogehoge",
 			},
 			uploadPost: model.UploadPost{
 				Image:        "hoge",
 				Date:         time.Date(2025, time.January, 30, 15, 4, 5, 0, time.UTC),
 				Comment:      "hogehoge",
 				PrefectureId: 1,
-				Longitude:    124.456,
+				Longitude:    123.456,
 				Latitude:     123.456,
 			},
 			want: model.Post{
@@ -67,11 +67,16 @@ func TestCreateUserAndPost(t *testing.T) {
 			}
 
 			tc.want.UserId = createdUser.UserId
+			tc.uploadPost.UserId = createdUser.UserId
+			
 			gotPost, err := postRepository.CreatePost(tc.uploadPost)
+			
 
 			if err != nil {
-				t.Fatalf("FindUserByID() error = %v", err)
+				t.Fatalf("CreatedPost() error = %v", err)
 			}
+			
+			tc.want.PostId = gotPost.PostId
 
 			if diff := cmp.Diff(tc.want, *gotPost); diff != "" {
 				t.Errorf("CreatePost() mismatch (-want +got):\n%s", diff)
@@ -99,7 +104,7 @@ func TestCreateUserAndPostAndDeletePost(t *testing.T) {
 				Date:         time.Date(2025, time.January, 30, 15, 4, 5, 0, time.UTC),
 				Comment:      "hogehoge",
 				PrefectureId: 1,
-				Longitude:    124.456,
+				Longitude:    123.456,
 				Latitude:     123.456,
 			},
 			want: model.Post{
@@ -135,11 +140,15 @@ func TestCreateUserAndPostAndDeletePost(t *testing.T) {
 			}
 
 			tc.want.UserId = createdUser.UserId
+			tc.uploadPost.UserId = createdUser.UserId
 			gotPost, err := postRepository.CreatePost(tc.uploadPost)
 
 			if err != nil {
 				t.Fatalf("CreatePost() error = %v", err)
 			}
+
+			tc.want.PostId = gotPost.PostId
+
 			if diff := cmp.Diff(tc.want, *gotPost); diff != "" {
 				t.Errorf("CreatePost() mismatch (-want +got):\n%s", diff)
 			}
@@ -162,6 +171,6 @@ func TestCreateUserAndPostAndDeletePost(t *testing.T) {
 	}
 }
 
-func TestCreateUserAndPostAndFetchPost(t *testing.T) {
+// func TestCreateUserAndPostAndFetchPost(t *testing.T) {
 
-}
+// }
