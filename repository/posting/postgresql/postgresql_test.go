@@ -161,6 +161,15 @@ func TestCreateUserAndPostAndDeletePost(t *testing.T) {
 			if diff := cmp.Diff(tc.want.PostId, *gotPostId); diff != "" {
 				t.Errorf("DeletePost() mismatch (-want +got):\n%s", diff)
 			}
+
+			deletedPost, err := postRepository.FindPostByID(deletePost.PostId)
+			if err == nil {
+				t.Errorf("FindPostByID() expected error but got none")
+			}
+			if deletedPost != nil {
+				t.Errorf("FindPostByID() expected nil but got %+v", deletedPost)
+			}
+
 		})
 	}
 }

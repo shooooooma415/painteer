@@ -7,11 +7,11 @@ import (
 )
 
 type PostRepositoryImpl struct {
-	dB *sql.DB
+	db *sql.DB
 }
 
 func NewPostRepository(db *sql.DB) *PostRepositoryImpl {
-	return &PostRepositoryImpl{DB: db}
+	return &PostRepositoryImpl{db: db}
 }
 
 func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.Post, error) {
@@ -24,7 +24,7 @@ func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.Pos
 	`
 
 	var uploadedPost model.Post
-	err := q.dB.QueryRow(
+	err := q.db.QueryRow(
 		query,
 		uploadPost.Image,
 		uploadPost.Comment,
@@ -59,7 +59,7 @@ func (q *PostRepositoryImpl) DeletePost(deletePost model.DeletePost) (*model.Pos
 		`
 
 	var deletedPostId model.PostId
-	err := q.dB.QueryRow(query, deletePost.PostId, deletePost.UserId).Scan(
+	err := q.db.QueryRow(query, deletePost.PostId, deletePost.UserId).Scan(
 		&deletedPostId,
 	)
 	if err != nil {
@@ -77,7 +77,7 @@ func (q *PostRepositoryImpl) FindPostByID(postId model.PostId) (*model.Post, err
 	`
 
 	var fetchedPost model.Post
-	err := q.dB.QueryRow(query, postId).Scan(
+	err := q.db.QueryRow(query, postId).Scan(
 		&fetchedPost.PostId,
 		&fetchedPost.Image,
 		&fetchedPost.Comment,
