@@ -146,12 +146,6 @@ func TestCreateUserAndPostAndDeletePost(t *testing.T) {
 			if err != nil {
 				t.Fatalf("CreatePost() error = %v", err)
 			}
-
-			tc.want.PostId = gotPost.PostId
-
-			if diff := cmp.Diff(tc.want, *gotPost); diff != "" {
-				t.Errorf("CreatePost() mismatch (-want +got):\n%s", diff)
-			}
 			
 			deletePost:= model.DeletePost{
 				PostId: gotPost.PostId,
@@ -239,7 +233,7 @@ func TestCreateUserAndPostAndFetchPost(t *testing.T) {
 				t.Errorf("CreatePost() mismatch (-want +got):\n%s", diff)
 			}
 
-			gotPost,err := postRepository.FetchPost(createdPost.PostId)
+			gotPost,err := postRepository.FindPostByID(createdPost.PostId)
 
 			if err != nil {
 				t.Fatalf("FetchPost() error = %v", err)
