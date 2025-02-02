@@ -7,10 +7,11 @@ type GroupName string
 type Password string
 
 type Group struct {
+	GroupId   GroupId
 	GroupName GroupName
 	Icon      string
+	Password  Password
 	AuthorId  UserId
-	GroupId   GroupId
 }
 
 type CreateGroup struct {
