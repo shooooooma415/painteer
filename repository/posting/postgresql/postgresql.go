@@ -7,7 +7,7 @@ import (
 )
 
 type PostRepositoryImpl struct {
-	DB *sql.DB
+	dB *sql.DB
 }
 
 func NewPostRepository(db *sql.DB) *PostRepositoryImpl {

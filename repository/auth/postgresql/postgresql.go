@@ -7,7 +7,7 @@ import (
 )
 
 type AuthRepositoryImpl struct {
-	DB *sql.DB
+	db *sql.DB
 }
 
 func NewAuthRepository(db *sql.DB) *AuthRepositoryImpl {
