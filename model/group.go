@@ -9,7 +9,6 @@ type Password string
 type Group struct {
 	GroupName GroupName
 	Icon      string
-	Password  Password
 	UserId    UserId
 	GroupId   GroupId
 }
@@ -29,4 +28,9 @@ type JoinGroup struct {
 
 type FetchedGroup struct {
 	Groups []Group
+}
+
+type PublicSetting struct {
+	PostId       PostId
+	publicGroups []GroupId
 }
