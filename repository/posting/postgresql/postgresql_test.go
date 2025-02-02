@@ -2,14 +2,18 @@ package postgresql_test
 
 import (
 	"painteer/model"
+	userPostgresql "painteer/repository/auth/postgresql"
+	postPostgresql "painteer/repository/posting/postgresql"
+	setupDB "painteer/repository/utils"
 	"testing"
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	_ "github.com/lib/pq"
 )
 
 func TestCreateUserAndPost(t *testing.T) {
-	testCase := []struct {
+	testCases := []struct {
 		name       string
 		createUser model.CreateUser
 		uploadPost model.UploadPost
@@ -39,6 +43,40 @@ func TestCreateUserAndPost(t *testing.T) {
 				Latitude:     123.456,
 			},
 		},
+	}
+
+	db, err := setupDB.ConnectDB()
+	if err != nil {
+		t.Fatalf("Failed to connect to the database: %v", err)
+	}
+	defer db.Close()
+
+	userRepository := userPostgresql.NewAuthRepository(db)
+	postRepository := postPostgresql.NewPostRepository(db)
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			createdUser, err := userRepository.CreateUser(tc.createUser)
+
+			if err != nil {
+				t.Fatalf("CreateUser() error = %v", err)
+			}
+			if createdUser == nil {
+				t.Fatal("CreateUser() returned nil, expected valid User")
+			}
+
+			tc.want.UserId = createdUser.UserId
+			gotPost, err := postRepository.CreatePost(tc.uploadPost)
+
+			if err != nil {
+				t.Fatalf("FindUserByID() error = %v", err)
+			}
+
+			if diff := cmp.Diff(tc.want, *gotPost); diff != "" {
+				t.Errorf("CreatePost() mismatch (-want +got):\n%s", diff)
+			}
+		})
 	}
 }
 
