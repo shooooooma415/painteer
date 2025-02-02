@@ -182,7 +182,7 @@ func TestCreateUserAndPostAndFetchPost(t *testing.T) {
 		want       model.Post
 	}{
 		{
-			name: "ユーザーの作成＆画像の投稿",
+			name: "ユーザーの作成＆画像の投稿&投稿のfetch",
 			createUser: model.CreateUser{
 				UserName: "hoge",
 				Icon:     "hoge",
