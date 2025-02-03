@@ -96,7 +96,6 @@ func TestCreateUserAndPost(t *testing.T) {
 	}
 }
 
-
 func TestCreatePostNotUser(t *testing.T) {
 	testCases := []struct {
 		name       string
@@ -221,7 +220,6 @@ func TestCreateUserAndPostAndDeletePost(t *testing.T) {
 	}
 }
 
-
 func TestCreateUserAndPostAndFetchPost(t *testing.T) {
 	testCases := []struct {
 		name       string
@@ -313,8 +311,6 @@ func TestFetchPostNotPost(t *testing.T) {
 
 			if err == nil {
 				t.Errorf("FindPostByID() expected an error but got none")
-			} else {
-				t.Logf("FindPostByID() correctly returned error: %v", err)
 			}
 
 			if gotPost != nil {
