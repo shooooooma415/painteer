@@ -288,3 +288,40 @@ func TestCreateUserAndPostAndFetchPost(t *testing.T) {
 		})
 	}
 }
+
+func TestFetchPostNotPost(t *testing.T) {
+	testCases := []struct {
+		name   string
+		postId model.PostId
+	}{
+		{
+			name:   "存在しないPostIdで投稿を取得しようとする",
+			postId: 999999999,
+		},
+	}
+
+	db, err := setupDB.ConnectDB()
+	if err != nil {
+		t.Fatalf("Failed to connect to the database: %v", err)
+	}
+	defer db.Close()
+
+	postRepository := postPostgresql.NewPostRepository(db)
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			gotPost, err := postRepository.FindPostByID(tc.postId)
+
+			if err == nil {
+				t.Errorf("FindPostByID() expected an error but got none")
+			} else {
+				t.Logf("FindPostByID() correctly returned error: %v", err)
+			}
+
+			if gotPost != nil {
+				t.Errorf("FindPostByID() expected nil but got %+v", gotPost)
+			}
+		})
+	}
+}
