@@ -89,6 +89,51 @@ func TestCreateUserAndPost(t *testing.T) {
 	}
 }
 
+func TestCreatePostNotUser(t *testing.T) {
+	testCases := []struct {
+		name       string
+		uploadPost model.UploadPost
+	}{
+		{
+			name: "ユーザーが存在しないUserIdでの画像の投稿",
+			uploadPost: model.UploadPost{
+				UserId: 111111111,
+				Image:        "hoge",
+				Date:         time.Date(2025, time.January, 30, 15, 4, 5, 0, time.UTC),
+				Comment:      "hogehoge",
+				PrefectureId: 1,
+				Longitude:    123.456,
+				Latitude:     123.456,
+			},
+		},
+	}
+
+	db, err := setupDB.ConnectDB()
+	if err != nil {
+		t.Fatalf("Failed to connect to the database: %v", err)
+	}
+	defer db.Close()
+
+	postRepository := postPostgresql.NewPostRepository(db)
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+
+			gotPost, err := postRepository.CreatePost(tc.uploadPost)
+			if err == nil {
+				t.Errorf("CreatePost() expected an error but got none")
+			} else {
+				t.Logf("CreatePost() correctly returned error: %v", err)
+			}
+
+			if gotPost != nil {
+				t.Errorf("CreatePost() expected nil post but got %+v", gotPost)
+			}
+		})
+	}
+}
+
 func TestCreateUserAndPostAndDeletePost(t *testing.T) {
 	testCases := []struct {
 		name       string
