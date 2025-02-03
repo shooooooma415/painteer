@@ -12,7 +12,13 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func createUserForTest(t *testing.T, userRepository *userPostgresql.AuthRepositoryImpl, createUser model.CreateUser) *model.User {
+func createUserAndPostForTest(
+	t *testing.T,
+	userRepository *userPostgresql.AuthRepositoryImpl,
+	postRepository *postPostgresql.PostRepositoryImpl,
+	createUser model.CreateUser,
+	uploadPost model.UploadPost,
+) (*model.User, *model.Post) {
 	t.Helper()
 	createdUser, err := userRepository.CreateUser(createUser)
 	if err != nil {
@@ -22,7 +28,15 @@ func createUserForTest(t *testing.T, userRepository *userPostgresql.AuthReposito
 		t.Fatal("CreateUser() returned nil, expected valid User")
 	}
 	t.Logf("Created User: %+v", createdUser)
-	return createdUser
+
+	uploadPost.UserId = createdUser.UserId
+	createdPost, err := postRepository.CreatePost(uploadPost)
+	if err != nil {
+		t.Fatalf("CreatePost() error = %v", err)
+	}
+	t.Logf("Created Post: %+v", createdPost)
+
+	return createdUser, createdPost
 }
 
 func TestCreateUserAndPost(t *testing.T) {
@@ -70,24 +84,18 @@ func TestCreateUserAndPost(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			createdUser := createUserForTest(t, userRepository, tc.createUser)
+			createdUser, createdPost := createUserAndPostForTest(t, userRepository, postRepository, tc.createUser, tc.uploadPost)
 
 			tc.want.UserId = createdUser.UserId
-			tc.uploadPost.UserId = createdUser.UserId
+			tc.want.PostId = createdPost.PostId
 
-			gotPost, err := postRepository.CreatePost(tc.uploadPost)
-			if err != nil {
-				t.Fatalf("CreatePost() error = %v", err)
-			}
-
-			tc.want.PostId = gotPost.PostId
-
-			if diff := cmp.Diff(tc.want, *gotPost); diff != "" {
+			if diff := cmp.Diff(tc.want, *createdPost); diff != "" {
 				t.Errorf("CreatePost() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
 }
+
 
 func TestCreatePostNotUser(t *testing.T) {
 	testCases := []struct {
@@ -97,7 +105,7 @@ func TestCreatePostNotUser(t *testing.T) {
 		{
 			name: "ユーザーが存在しないUserIdでの画像の投稿",
 			uploadPost: model.UploadPost{
-				UserId: 111111111,
+				UserId:       111111111,
 				Image:        "hoge",
 				Date:         time.Date(2025, time.January, 30, 15, 4, 5, 0, time.UTC),
 				Comment:      "hogehoge",
@@ -179,28 +187,27 @@ func TestCreateUserAndPostAndDeletePost(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			createdUser := createUserForTest(t, userRepository, tc.createUser)
+			createdUser, createdPost := createUserAndPostForTest(t, userRepository, postRepository, tc.createUser, tc.uploadPost)
 
 			tc.want.UserId = createdUser.UserId
-			tc.uploadPost.UserId = createdUser.UserId
+			tc.want.PostId = createdPost.PostId
 
-			gotPost, err := postRepository.CreatePost(tc.uploadPost)
-			if err != nil {
-				t.Fatalf("CreatePost() error = %v", err)
+			if diff := cmp.Diff(tc.want, *createdPost); diff != "" {
+				t.Errorf("CreatePost() mismatch (-want +got):\n%s", diff)
 			}
 
 			deletePost := model.DeletePost{
-				PostId: gotPost.PostId,
+				PostId: createdPost.PostId,
 				UserId: createdUser.UserId,
 			}
-			gotPostId, err := postRepository.DeletePost(deletePost)
-			tc.want.PostId = deletePost.PostId
 
+			gotPostId, err := postRepository.DeletePost(deletePost)
 			if err != nil {
 				t.Fatalf("DeletePost() error = %v", err)
 			}
-			if diff := cmp.Diff(tc.want.PostId, *gotPostId); diff != "" {
-				t.Errorf("DeletePost() mismatch (-want +got):\n%s", diff)
+
+			if gotPostId == nil || *gotPostId != deletePost.PostId {
+				t.Errorf("DeletePost() PostId mismatch: expected %v, got %v", deletePost.PostId, gotPostId)
 			}
 
 			deletedPost, err := postRepository.FindPostByID(deletePost.PostId)
@@ -210,9 +217,12 @@ func TestCreateUserAndPostAndDeletePost(t *testing.T) {
 			if deletedPost != nil {
 				t.Errorf("FindPostByID() expected nil but got %+v", deletedPost)
 			}
+
+			t.Logf("Test Passed: %s | Deleted PostID = %v", tc.name, deletePost.PostId)
 		})
 	}
 }
+
 
 func TestCreateUserAndPostAndFetchPost(t *testing.T) {
 	testCases := []struct {
@@ -259,21 +269,10 @@ func TestCreateUserAndPostAndFetchPost(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			createdUser := createUserForTest(t, userRepository, tc.createUser)
+			createdUser, createdPost := createUserAndPostForTest(t, userRepository, postRepository, tc.createUser, tc.uploadPost)
 
 			tc.want.UserId = createdUser.UserId
-			tc.uploadPost.UserId = createdUser.UserId
-
-			createdPost, err := postRepository.CreatePost(tc.uploadPost)
-			if err != nil {
-				t.Fatalf("CreatePost() error = %v", err)
-			}
-
 			tc.want.PostId = createdPost.PostId
-
-			if diff := cmp.Diff(tc.want, *createdPost); diff != "" {
-				t.Errorf("CreatePost() mismatch (-want +got):\n%s", diff)
-			}
 
 			gotPost, err := postRepository.FindPostByID(createdPost.PostId)
 			if err != nil {
