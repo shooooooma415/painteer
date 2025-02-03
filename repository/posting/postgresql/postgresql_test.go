@@ -131,8 +131,6 @@ func TestCreatePostNotUser(t *testing.T) {
 			gotPost, err := postRepository.CreatePost(tc.uploadPost)
 			if err == nil {
 				t.Errorf("CreatePost() expected an error but got none")
-			} else {
-				t.Logf("CreatePost() correctly returned error: %v", err)
 			}
 
 			if gotPost != nil {
