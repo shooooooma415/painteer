@@ -21,10 +21,14 @@ type CreateGroup struct {
 	AuthorId  UserId
 }
 
-type JoinGroup struct {
-	UserId    UserId
-	GroupName GroupName
+type VerifyPassword struct{
 	Password  Password
+	GroupName GroupName
+}
+
+type JoinGroup struct {
+	UserId  UserId
+	GroupId GroupId
 }
 
 type FetchedGroup struct {
