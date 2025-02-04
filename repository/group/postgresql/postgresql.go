@@ -125,3 +125,54 @@ func (q *GroupRepositoryImpl) FindGroupByID(groupId model.GroupId) (*model.Group
 	}
 	return &foundGroup, nil
 }
+
+func (q *GroupRepositoryImpl) FindGroupMembersByID(groupId model.GroupId) (*model.GroupMember, error) {
+	query := `
+		SELECT ug.group_id, u.name
+		FROM user_group ug
+		LEFT JOIN users u
+		ON ug.user_id = u.id
+		WHERE ug.group_id = $1
+	`
+
+	rows, err := q.db.Query(query, groupId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch group members: %w", err)
+	}
+	defer rows.Close()
+
+	var members []model.UserName
+	var fetchedGroupId model.GroupId
+
+	firstRow := true
+	for rows.Next() {
+		var userName model.UserName
+		var currentGroupId model.GroupId
+
+		if err := rows.Scan(&currentGroupId, &userName); err != nil {
+			return nil, fmt.Errorf("failed to scan user_name: %w", err)
+		}
+
+		if firstRow {
+			fetchedGroupId = currentGroupId
+			firstRow = false
+		}
+
+		members = append(members, userName)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("rows iteration error: %w", err)
+	}
+
+	if firstRow {
+		return nil, fmt.Errorf("no members found for group_id: %d", groupId)
+	}
+
+	returnValue := model.GroupMember{
+		GroupId: fetchedGroupId,
+		Members: members,
+	}
+
+	return &returnValue, nil
+}
