@@ -32,6 +32,7 @@ type JoinGroup struct {
 }
 
 type FetchedGroups struct {
+	UserId UserId
 	Groups []Group
 }
 

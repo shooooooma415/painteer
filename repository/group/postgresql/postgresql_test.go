@@ -359,3 +359,5 @@ func TestCreateUserAndGroupAndFindGroupID(t *testing.T) {
 		})
 	}
 }
+
+func Test

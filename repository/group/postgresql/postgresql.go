@@ -192,3 +192,46 @@ func (q *GroupRepositoryImpl) CreatePostPublicSetting(ps model.PublicSetting) (*
 	}
 	return &setPost, nil
 }
+
+func (q *GroupRepositoryImpl) FindGroupsByUserID(userId model.UserId) (*model.FetchedGroups, error) {
+	query := `
+		SELECT ug.user_id, ug.group_id, g.name, g.icon, g.password, g.author_id
+		FROM user_group ug
+		LEFT JOIN groups g
+		ON ug.group_id = g.id
+		WHERE ug.user_id = $1
+	`
+
+	rows, err := q.db.Query(query, userId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch groups for user: %w", err)
+	}
+	defer rows.Close()
+
+	var fetchedGroups model.FetchedGroups
+	fetchedGroups.UserId = userId
+	var groups []model.Group
+
+	for rows.Next() {
+		var group model.Group
+		err := rows.Scan(
+			&fetchedGroups.UserId,
+			&group.GroupId,
+			&group.GroupName,
+			&group.Icon,
+			&group.Password,
+			&group.AuthorId,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan group data: %w", err)
+		}
+		groups = append(groups, group)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("rows iteration error: %w", err)
+	}
+
+	fetchedGroups.Groups = groups
+	return &fetchedGroups, nil
+}
