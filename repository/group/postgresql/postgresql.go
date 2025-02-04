@@ -58,8 +58,31 @@ func (q *GroupRepositoryImpl) JoinGroup(joinGroup model.JoinGroup) (*model.JoinG
 		&joinedGroup.UserId,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create group:%w", err)
+		return nil, fmt.Errorf("failed to join group:%w", err)
 	}
 	return &joinedGroup, nil
 }
 
+func (q *GroupRepositoryImpl)FindGroupIDByPasswordAndName(verifyPassword model.VerifyPassword) (*model.GroupId, error){
+	query := `
+			SELECT id FROM groups
+			WHERE password = $1
+			AND name = $2
+	`
+	var groupId model.GroupId
+	err := q.db.QueryRow(
+		query,
+		verifyPassword.Password,
+		verifyPassword.GroupName,
+		).Scan(
+			&groupId,
+		)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return nil, fmt.Errorf("group not found: password=%s, name=%s", verifyPassword.Password, verifyPassword.GroupName)
+			}
+			return nil, fmt.Errorf("failed to join group: %w", err)
+		}
+	
+		return &groupId, nil
+}
