@@ -36,8 +36,8 @@ type FetchedGroups struct {
 }
 
 type PublicSetting struct {
-	PostId       PostId
-	publicGroups []GroupId
+	PostId        PostId
+	PublicGroupId GroupId
 }
 
 type GroupMember struct {

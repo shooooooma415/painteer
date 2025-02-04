@@ -176,3 +176,18 @@ func (q *GroupRepositoryImpl) FindGroupMembersByID(groupId model.GroupId) (*mode
 
 	return &returnValue, nil
 }
+
+func (q *GroupRepositoryImpl) CreatePostPublicSetting(ps model.PublicSetting) (*model.PublicSetting, error) {
+	query := `
+		INSERT INTO public_setting (post_id, group_id)
+		VALUE $1, $2
+		RETURNING post_id, group_id
+	`
+	var setPost model.PublicSetting
+	err := q.db.QueryRow(query, ps.PostId, ps.PostId).Scan(&setPost.PostId, &setPost.PublicGroupId)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to create public setting: %w", err)
+	}
+	return &setPost, nil
+}
