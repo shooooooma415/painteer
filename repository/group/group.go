@@ -7,6 +7,6 @@ type GroupRepository interface {
 	VerifyPassword(VerifyPassword model.VerifyPassword)(*model.GroupId,error)
 	IsUserExist(joinGroup model.JoinGroup)(bool,error)
 	JoinGroup(joinGroup model.JoinGroup) (*model.Group, error)
-	FetchGroup(userId model.UserId) (*model.FetchedGroup, error)
+	FetchUserGroups(userId model.UserId) (*model.FetchedGroups, error)
 	InsertPublicSetting(publicSetting model.PublicSetting) (*model.PublicSetting, error)
 }
