@@ -7,7 +7,7 @@ import (
 )
 
 type GroupRepositoryImpl struct {
-	DB *sql.DB
+	db *sql.DB
 }
 
 func NewGroupRepository(db *sql.DB) *GroupRepositoryImpl {
@@ -22,7 +22,7 @@ func (q *GroupRepositoryImpl) CreateGroup(createGroup model.CreateGroup) (*model
 	`
 	var createdGroup model.Group
 
-	err := q.DB.QueryRow(
+	err := q.db.QueryRow(
 		query,
 		createGroup.GroupName,
 		createGroup.Password,
@@ -40,6 +40,25 @@ func (q *GroupRepositoryImpl) CreateGroup(createGroup model.CreateGroup) (*model
 	return &createdGroup, nil
 }
 
-func (q *GroupRepositoryImpl) JoinGroup(joinGroup model.JoinGroup)(*model.Group,error){
-	
+func (q *GroupRepositoryImpl) JoinGroup(joinGroup model.JoinGroup) (*model.JoinGroup, error) {
+	query := `
+		INSERT INTO user_group (group_id, user_id)
+		VALUES ($1, $2)
+		RETURNING group_id, user_id
+	`
+
+	var joinedGroup model.JoinGroup
+
+	err := q.db.QueryRow(
+		query,
+		joinGroup.GroupId,
+		joinGroup.UserId,
+	).Scan(
+		&joinedGroup.GroupId,
+		&joinedGroup.UserId,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create group:%w", err)
+	}
+	return &joinedGroup, nil
 }
