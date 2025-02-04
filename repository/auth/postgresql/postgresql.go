@@ -7,11 +7,11 @@ import (
 )
 
 type AuthRepositoryImpl struct {
-	DB *sql.DB
+	db *sql.DB
 }
 
 func NewAuthRepository(db *sql.DB) *AuthRepositoryImpl {
-	return &AuthRepositoryImpl{DB: db}
+	return &AuthRepositoryImpl{db: db}
 }
 
 func (q *AuthRepositoryImpl) CreateUser(createUser model.CreateUser) (*model.User, error) {
@@ -23,7 +23,7 @@ func (q *AuthRepositoryImpl) CreateUser(createUser model.CreateUser) (*model.Use
 
 	var resultUser model.User
 
-	err := q.DB.QueryRow(
+	err := q.db.QueryRow(
 		query,
 		createUser.UserName,
 		createUser.Icon,
@@ -50,7 +50,7 @@ func (q *AuthRepositoryImpl) FindUserByAuthID(authId model.AuthId) (*model.User,
 
 	var resultUser model.User
 
-	err := q.DB.QueryRow(
+	err := q.db.QueryRow(
 		query,
 		authId,
 	).Scan(
@@ -75,7 +75,7 @@ func (q *AuthRepositoryImpl) FindUserByUserID(userId model.UserId) (*model.User,
 
 	var resultUser model.User
 
-	err := q.DB.QueryRow(
+	err := q.db.QueryRow(
 		query,
 		userId,
 	).Scan(
