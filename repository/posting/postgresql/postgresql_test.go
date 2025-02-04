@@ -90,7 +90,7 @@ func TestCreateUserAndPost(t *testing.T) {
 			tc.want.PostId = createdPost.PostId
 
 			if diff := cmp.Diff(tc.want, *createdPost); diff != "" {
-				t.Errorf("CreatePost() mismatch (-want +got):\n%s", diff)
+				t.Fatalf("CreatePost() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
@@ -129,11 +129,11 @@ func TestCreatePostNotUser(t *testing.T) {
 
 			gotPost, err := postRepository.CreatePost(tc.uploadPost)
 			if err == nil {
-				t.Errorf("CreatePost() expected an error but got none")
+				t.Fatalf("CreatePost() expected an error but got none")
 			}
 
 			if gotPost != nil {
-				t.Errorf("CreatePost() expected nil post but got %+v", gotPost)
+				t.Fatalf("CreatePost() expected nil post but got %+v", gotPost)
 			}
 		})
 	}
@@ -190,7 +190,7 @@ func TestCreateUserAndPostAndDeletePost(t *testing.T) {
 			tc.want.PostId = createdPost.PostId
 
 			if diff := cmp.Diff(tc.want, *createdPost); diff != "" {
-				t.Errorf("CreatePost() mismatch (-want +got):\n%s", diff)
+				t.Fatalf("CreatePost() mismatch (-want +got):\n%s", diff)
 			}
 
 			deletePost := model.DeletePost{
@@ -204,15 +204,15 @@ func TestCreateUserAndPostAndDeletePost(t *testing.T) {
 			}
 
 			if gotPostId == nil || *gotPostId != deletePost.PostId {
-				t.Errorf("DeletePost() PostId mismatch: expected %v, got %v", deletePost.PostId, gotPostId)
+				t.Fatalf("DeletePost() PostId mismatch: expected %v, got %v", deletePost.PostId, gotPostId)
 			}
 
 			deletedPost, err := postRepository.FindPostByID(deletePost.PostId)
 			if err == nil {
-				t.Errorf("FindPostByID() expected error but got none")
+				t.Fatalf("FindPostByID() expected error but got none")
 			}
 			if deletedPost != nil {
-				t.Errorf("FindPostByID() expected nil but got %+v", deletedPost)
+				t.Fatalf("FindPostByID() expected nil but got %+v", deletedPost)
 			}
 		})
 	}
@@ -274,7 +274,7 @@ func TestCreateUserAndPostAndFetchPost(t *testing.T) {
 			}
 
 			if diff := cmp.Diff(tc.want, *gotPost); diff != "" {
-				t.Errorf("FetchPost() mismatch (-want +got):\n%s", diff)
+				t.Fatalf("FetchPost() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
@@ -305,11 +305,11 @@ func TestFetchPostNotPost(t *testing.T) {
 			gotPost, err := postRepository.FindPostByID(tc.postId)
 
 			if err == nil {
-				t.Errorf("FindPostByID() expected an error but got none")
+				t.Fatalf("FindPostByID() expected an error but got none")
 			}
 
 			if gotPost != nil {
-				t.Errorf("FindPostByID() expected nil but got %+v", gotPost)
+				t.Fatalf("FindPostByID() expected nil but got %+v", gotPost)
 			}
 		})
 	}
