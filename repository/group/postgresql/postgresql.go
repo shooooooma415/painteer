@@ -87,7 +87,7 @@ func (q *GroupRepositoryImpl) FindGroupIDByPasswordAndName(verifyPassword model.
 	return &groupId, nil
 }
 
-func (q *GroupRepositoryImpl) IsUserExist(joinGroup model.JoinGroup) (bool, error){
+func (q *GroupRepositoryImpl) IsUserExist(joinGroup model.JoinGroup) (bool, error) {
 	query := `
 		SELECT EXISTS(
 			SELECT 1 FROM user_group
@@ -95,7 +95,7 @@ func (q *GroupRepositoryImpl) IsUserExist(joinGroup model.JoinGroup) (bool, erro
 			AND group_id = $2
 		)
 	`
-	
+
 	var isExist bool
 	err := q.db.QueryRow(query, joinGroup.UserId, joinGroup.GroupId).Scan(&isExist)
 	if err != nil {
@@ -103,4 +103,25 @@ func (q *GroupRepositoryImpl) IsUserExist(joinGroup model.JoinGroup) (bool, erro
 	}
 
 	return isExist, nil
+}
+
+func (q *GroupRepositoryImpl) FindGroupByID(groupId model.GroupId) (*model.Group, error) {
+	query := `
+		SELECT id, name, icon, password, author_id
+		FROM groups
+		WHERE id = $1
+	`
+
+	var foundGroup model.Group
+	err := q.db.QueryRow(query, groupId).Scan(
+		&foundGroup.GroupId,
+		&foundGroup.GroupName,
+		&foundGroup.Icon,
+		&foundGroup.Password,
+		&foundGroup.AuthorId,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find group: %w", err)
+	}
+	return &foundGroup, nil
 }
