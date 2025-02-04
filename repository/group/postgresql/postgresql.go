@@ -11,7 +11,7 @@ type GroupRepositoryImpl struct {
 }
 
 func NewGroupRepository(db *sql.DB) *GroupRepositoryImpl {
-	return &GroupRepositoryImpl{DB: db}
+	return &GroupRepositoryImpl{db: db}
 }
 
 func (q *GroupRepositoryImpl) CreateGroup(createGroup model.CreateGroup) (*model.Group, error) {

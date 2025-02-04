@@ -8,5 +8,6 @@ type GroupRepository interface {
 	IsUserExist(joinGroup model.JoinGroup)(bool,error)
 	JoinGroup(joinGroup model.JoinGroup) (*model.Group, error)
 	FetchUserGroups(userId model.UserId) (*model.FetchedGroups, error)
+	FindGroupByID(groupId model.GroupId)(*model.Group,error)
 	InsertPublicSetting(publicSetting model.PublicSetting) (*model.PublicSetting, error)
 }
