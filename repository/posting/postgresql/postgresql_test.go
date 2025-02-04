@@ -214,8 +214,6 @@ func TestCreateUserAndPostAndDeletePost(t *testing.T) {
 			if deletedPost != nil {
 				t.Errorf("FindPostByID() expected nil but got %+v", deletedPost)
 			}
-
-			t.Logf("Test Passed: %s | Deleted PostID = %v", tc.name, deletePost.PostId)
 		})
 	}
 }
@@ -278,9 +276,6 @@ func TestCreateUserAndPostAndFetchPost(t *testing.T) {
 			if diff := cmp.Diff(tc.want, *gotPost); diff != "" {
 				t.Errorf("FetchPost() mismatch (-want +got):\n%s", diff)
 			}
-
-			t.Logf("Test Passed: %s | Created PostID = %v, Fetched PostID = %v",
-				tc.name, createdPost.PostId, gotPost.PostId)
 		})
 	}
 }
