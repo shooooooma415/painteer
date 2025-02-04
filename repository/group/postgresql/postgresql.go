@@ -16,8 +16,8 @@ func NewGroupRepository(db *sql.DB) *GroupRepositoryImpl {
 
 func (q *GroupRepositoryImpl) CreateGroup(createGroup model.CreateGroup) (*model.Group, error) {
 	query := `
-		INSERT INTO groups (name, password, author_id)
-		VALUES ($1, $2, $3)
+		INSERT INTO groups (name, password, author_id, icon)
+		VALUES ($1, $2, $3, $4)
 		RETURNING *
 	`
 	var createdGroup model.Group
@@ -27,6 +27,7 @@ func (q *GroupRepositoryImpl) CreateGroup(createGroup model.CreateGroup) (*model
 		createGroup.GroupName,
 		createGroup.Password,
 		createGroup.AuthorId,
+		createGroup.Icon,
 	).Scan(
 		&createdGroup.GroupId,
 		&createdGroup.GroupName,

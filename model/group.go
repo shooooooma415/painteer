@@ -44,3 +44,5 @@ type GroupMember struct {
 	GroupId GroupId
 	Members []UserName
 }
+
+type PostId string //マージしたら消す
