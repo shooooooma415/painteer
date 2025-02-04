@@ -21,7 +21,7 @@ type CreateGroup struct {
 	AuthorId  UserId
 }
 
-type VerifyPassword struct{
+type VerifyPassword struct {
 	Password  Password
 	GroupName GroupName
 }
@@ -38,4 +38,9 @@ type FetchedGroups struct {
 type PublicSetting struct {
 	PostId       PostId
 	publicGroups []GroupId
+}
+
+type GroupMember struct {
+	GroupId GroupId
+	Members []UserId
 }

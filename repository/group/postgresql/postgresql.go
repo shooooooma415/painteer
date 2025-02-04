@@ -62,3 +62,4 @@ func (q *GroupRepositoryImpl) JoinGroup(joinGroup model.JoinGroup) (*model.JoinG
 	}
 	return &joinedGroup, nil
 }
+
