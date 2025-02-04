@@ -63,7 +63,7 @@ func (q *GroupRepositoryImpl) JoinGroup(joinGroup model.JoinGroup) (*model.JoinG
 	return &joinedGroup, nil
 }
 
-func (q *GroupRepositoryImpl)FindGroupIDByPasswordAndName(verifyPassword model.VerifyPassword) (*model.GroupId, error){
+func (q *GroupRepositoryImpl) FindGroupIDByPasswordAndName(verifyPassword model.VerifyPassword) (*model.GroupId, error) {
 	query := `
 			SELECT id FROM groups
 			WHERE password = $1
@@ -74,15 +74,33 @@ func (q *GroupRepositoryImpl)FindGroupIDByPasswordAndName(verifyPassword model.V
 		query,
 		verifyPassword.Password,
 		verifyPassword.GroupName,
-		).Scan(
-			&groupId,
-		)
-		if err != nil {
-			if err == sql.ErrNoRows {
-				return nil, fmt.Errorf("group not found: password=%s, name=%s", verifyPassword.Password, verifyPassword.GroupName)
-			}
-			return nil, fmt.Errorf("failed to join group: %w", err)
+	).Scan(
+		&groupId,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("group not found: password=%s, name=%s", verifyPassword.Password, verifyPassword.GroupName)
 		}
+		return nil, fmt.Errorf("failed to join group: %w", err)
+	}
+
+	return &groupId, nil
+}
+
+func (q *GroupRepositoryImpl) IsUserExist(joinGroup model.JoinGroup) (bool, error){
+	query := `
+		SELECT EXISTS(
+			SELECT 1 FROM user_group
+			WHERE user_id = $1
+			AND group_id = $2
+		)
+	`
 	
-		return &groupId, nil
+	var isExist bool
+	err := q.db.QueryRow(query, joinGroup.UserId, joinGroup.GroupId).Scan(&isExist)
+	if err != nil {
+		return false, fmt.Errorf("failed to check user existence in group: %w", err)
+	}
+
+	return isExist, nil
 }
