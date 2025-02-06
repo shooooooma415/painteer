@@ -95,13 +95,13 @@ func TestCreateGroup(t *testing.T) {
 	}
 }
 
-func TestCreateAndJoinGroup(t *testing.T) {
+func TestCreateAndInsertGroup(t *testing.T) {
 	testCases := []struct {
 		name         string
 		createAuthor *model.CreateUser
 		createGroup  *model.CreateGroup
-		joinGroup    *model.JoinGroup
-		want         *model.JoinGroup
+		insertGroup    *model.InsertGroup
+		want         *model.InsertGroup
 		expectErr    bool
 	}{
 		{
@@ -116,7 +116,7 @@ func TestCreateAndJoinGroup(t *testing.T) {
 				Icon:      "hoge",
 				Password:  "test",
 			},
-			want:      &model.JoinGroup{},
+			want:      &model.InsertGroup{},
 			expectErr: false,
 		},
 		{
@@ -127,7 +127,7 @@ func TestCreateAndJoinGroup(t *testing.T) {
 				AuthId:   "hoge",
 			},
 			createGroup: nil,
-			joinGroup: &model.JoinGroup{
+			insertGroup: &model.InsertGroup{
 				GroupId: 12345678234567,
 			},
 			want:      nil,
@@ -145,7 +145,7 @@ func TestCreateAndJoinGroup(t *testing.T) {
 				Icon:      "hoge",
 				Password:  "test",
 			},
-			joinGroup: &model.JoinGroup{
+			InsertGroup: &model.InsertGroup{
 				UserId: 12345678234567,
 			},
 			want:      nil,
@@ -187,14 +187,14 @@ func TestCreateAndJoinGroup(t *testing.T) {
 				}
 			}
 
-			if tc.joinGroup == nil {
-				tc.joinGroup = &model.JoinGroup{
+			if tc.insertGroup == nil {
+				tc.insertGroup = &model.InsertGroup{
 					UserId:  createdUser.UserId,
 					GroupId: createdGroup.GroupId,
 				}
 			}
 
-			gotJoinGroup, err := groupRepository.JoinGroup(*tc.joinGroup)
+			gotInsertGroup, err := groupRepository.InsertGroup(*tc.insertGroup)
 
 			if tc.expectErr {
 				if err == nil {
@@ -206,130 +206,14 @@ func TestCreateAndJoinGroup(t *testing.T) {
 			}
 
 			if err != nil {
-				t.Fatalf("JoinGroup() error = %v", err)
+				t.Fatalf("InsertGroup() error = %v", err)
 			}
 
-			tc.want.UserId = tc.joinGroup.UserId
-			tc.want.GroupId = tc.joinGroup.GroupId
+			tc.want.UserId = tc.insertGroup.UserId
+			tc.want.GroupId = tc.insertGroup.GroupId
 
-			if diff := cmp.Diff(tc.want, gotJoinGroup); diff != "" {
-				t.Fatalf("JoinGroup() mismatch (-want +got):\n%s", diff)
-			}
-		})
-	}
-}
-
-func TestCreateUserAndGroupAndFindGroupID(t *testing.T) {
-	testCases := []struct {
-		name           string
-		createAuthor   model.CreateUser
-		createGroup    model.CreateGroup
-		verifyPassword model.VerifyPassword
-		want           *model.Group
-		expectErr      bool
-	}{
-		{
-			name: "ユーザー&グループの作成->passwordとgroupNameが一致している",
-			createAuthor: model.CreateUser{
-				UserName: "GroupAuthor",
-				Icon:     "hoge",
-				AuthId:   "hoge",
-			},
-			createGroup: model.CreateGroup{
-				GroupName: "testCreateGroup1",
-				Icon:      "hoge",
-				Password:  "test",
-			},
-			verifyPassword: model.VerifyPassword{
-				Password:  "test",
-				GroupName: "testCreateGroup1",
-			},
-			want: &model.Group{
-				GroupName: "testCreateGroup",
-				Icon:      "hoge",
-				Password:  "test",
-			},
-			expectErr: false,
-		},
-		{
-			name: "ユーザー&グループの作成->passwordが間違っている",
-			createAuthor: model.CreateUser{
-				UserName: "GroupAuthor",
-				Icon:     "hoge",
-				AuthId:   "hoge",
-			},
-			createGroup: model.CreateGroup{
-				GroupName: "testCreateGroup2",
-				Icon:      "hoge",
-				Password:  "test",
-			},
-			verifyPassword: model.VerifyPassword{
-				Password:  "falsePassword",
-				GroupName: "testCreateGroup2",
-			},
-			want:      nil,
-			expectErr: true,
-		},
-		{
-			name: "ユーザー&グループの作成->groupNameが間違っている",
-			createAuthor: model.CreateUser{
-				UserName: "GroupAuthor",
-				Icon:     "hoge",
-				AuthId:   "hoge",
-			},
-			createGroup: model.CreateGroup{
-				GroupName: "testCreateGroup3",
-				Icon:      "hoge",
-				Password:  "test",
-			},
-			verifyPassword: model.VerifyPassword{
-				Password:  "test",
-				GroupName: "falseTestCreateGroup3",
-			},
-			want:      nil,
-			expectErr: true,
-		},
-	}
-
-	db, err := setupDB.ConnectDB()
-	if err != nil {
-		t.Fatalf("Failed to connect to the database: %v", err)
-	}
-	defer db.Close()
-
-	userRepository := userPostgresql.NewAuthRepository(db)
-	groupRepository := groupPostgresql.NewGroupRepository(db)
-
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			var createdGroup *model.Group
-			var err error
-
-			if tc.createGroup.GroupName != "" {
-				_, createdGroup, err = testUtils.CreateUserAndGroupForTest(t, userRepository, groupRepository, tc.createAuthor, tc.createGroup)
-				if err != nil {
-					t.Fatalf("Failed to create user and group: %v", err)
-				}
-			}
-
-			groupId, err := groupRepository.FindGroupIDByPasswordAndName(tc.verifyPassword)
-			if tc.expectErr {
-				if err == nil {
-					t.Fatalf("Expected error but got nil")
-				}
-				return
-			}
-
-			if err != nil {
-				t.Fatalf("FindGroupIDByPasswordAndName() error = %v", err)
-			}
-
-			if createdGroup != nil {
-				tc.want.GroupId = createdGroup.GroupId
-			}
-			if diff := cmp.Diff(tc.want.GroupId, *groupId); diff != "" {
-				t.Fatalf("FindGroupIDByPasswordAndName() mismatch (-want +got):\n%s", diff)
+			if diff := cmp.Diff(tc.want, gotInsertGroup); diff != "" {
+				t.Fatalf("InsertGroup() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
