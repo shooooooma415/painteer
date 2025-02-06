@@ -43,5 +43,5 @@ type PublicSetting struct {
 
 type GroupMember struct {
 	GroupId GroupId
-	Members []UserName
+	Members []UserId
 }
