@@ -10,5 +10,5 @@ type GroupRepository interface {
 	FetchUserGroups(userId model.UserId) (*model.FetchedGroups, error)
 	FindGroupByID(groupId model.GroupId) (*model.Group, error)
 	FetchGroupMembers(groupId model.GroupId) (*model.GroupMember, error)
-	InsertPublicSetting(publicSetting model.PublicSetting) (*model.PublicSetting, error)
+	CreatePublicSetting(publicSetting model.PublicSetting) (*model.PublicSetting, error)
 }
