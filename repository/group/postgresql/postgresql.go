@@ -64,24 +64,6 @@ func (q *GroupRepositoryImpl) InsertGroup(InsertGroup model.InsertGroup) (*model
 	return &joinedGroup, nil
 }
 
-func (q *GroupRepositoryImpl) IsUserExist(InsertGroup model.InsertGroup) (bool, error) {
-	query := `
-		SELECT EXISTS(
-			SELECT 1 FROM user_group
-			WHERE user_id = $1
-			AND group_id = $2
-		)
-	`
-
-	var isExist bool
-	err := q.db.QueryRow(query, InsertGroup.UserId, InsertGroup.GroupId).Scan(&isExist)
-	if err != nil {
-		return false, fmt.Errorf("failed to check user existence in group: %w", err)
-	}
-
-	return isExist, nil
-}
-
 func (q *GroupRepositoryImpl) FindGroupByGroupID(groupId model.GroupId) (*model.Group, error) {
 	query := `
 		SELECT id, name, icon, password, author_id
