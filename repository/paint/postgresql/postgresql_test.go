@@ -6,39 +6,13 @@ import (
 	postPostgresql "painteer/repository/posting/postgresql"
 	paintPostgresql "painteer/repository/paint/postgresql"
 	setupDB "painteer/repository/utils"
+	testUtils "painteer/repository/TestUtils"
 	"testing"
 	"time"
 
 	"github.com/google/go-cmp/cmp"
 	_ "github.com/lib/pq"
 )
-
-func createUserAndPostForTest(
-	t *testing.T,
-	userRepository *userPostgresql.AuthRepositoryImpl,
-	postRepository *postPostgresql.PostRepositoryImpl,
-	createUser model.CreateUser,
-	uploadPost model.UploadPost,
-) (*model.User, *model.Post) {
-	t.Helper()
-	createdUser, err := userRepository.CreateUser(createUser)
-	if err != nil {
-		t.Fatalf("CreateUser() error = %v", err)
-	}
-	if createdUser == nil {
-		t.Fatal("CreateUser() returned nil, expected valid User")
-	}
-	t.Logf("Created User: %+v", createdUser)
-
-	uploadPost.UserId = createdUser.UserId
-	createdPost, err := postRepository.CreatePost(uploadPost)
-	if err != nil {
-		t.Fatalf("CreatePost() error = %v", err)
-	}
-	t.Logf("Created Post: %+v", createdPost)
-
-	return createdUser, createdPost
-}
 
 func TestCreateUserAndPostAndFetchPostCount(t *testing.T) {
 	testCases := []struct {
@@ -48,7 +22,7 @@ func TestCreateUserAndPostAndFetchPostCount(t *testing.T) {
 		want       model.Count
 	}{
 		{
-			name: "ユーザーの作成＆画像の投稿",
+			name: "ユーザーの作成＆画像の投稿->投稿数を取得",
 			createUser: model.CreateUser{
 				UserName: "hoge",
 				Icon:     "hoge",
@@ -63,7 +37,7 @@ func TestCreateUserAndPostAndFetchPostCount(t *testing.T) {
 				Latitude:     123.456,
 			},
 			want: model.Count{
-				Data: []model.CountByPrefectureID{
+				Data: []model.CountPostByPrefectureId{
 					{
 						PrefectureId: 1,
 						PostCount:    1,
@@ -87,7 +61,7 @@ func TestCreateUserAndPostAndFetchPostCount(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			// ユーザーと投稿の作成
-			_, createdPost := createUserAndPostForTest(t, userRepository, postRepository, tc.createUser, tc.uploadPost)
+			_, createdPost := testUtils.CreateUserAndPostForTest(t, userRepository, postRepository, tc.createUser, tc.uploadPost)
 
 			// 投稿数を取得
 			count, err := pantRepository.CountPostsByPrefecture(createdPost.GroupId)
