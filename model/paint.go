@@ -1,10 +1,10 @@
 package model
 
-type CountByPrefectureID struct {
+type CountPostByPrefectureID struct {
 	PrefectureId int
 	PostCount    int
 }
 
 type Count struct {
-	Data []CountByPrefectureID
+	Data []CountPostByPrefectureID
 }
