@@ -169,7 +169,7 @@ func (q *GroupRepositoryImpl) CreatePostPublicSetting(ps model.PublicSetting) (*
 	return &setPost, nil
 }
 
-func (q *GroupRepositoryImpl) FindGroupsByUserID(userId model.UserId) (*model.FetchedGroups, error) {
+func (q *GroupRepositoryImpl) FindUserGroupsByUserID(userId model.UserId) (*model.UserGroups, error) {
 	query := `
 		SELECT ug.user_id, ug.group_id, g.name, g.icon, g.password, g.author_id
 		FROM user_group ug
@@ -184,7 +184,7 @@ func (q *GroupRepositoryImpl) FindGroupsByUserID(userId model.UserId) (*model.Fe
 	}
 	defer rows.Close()
 
-	var fetchedGroups model.FetchedGroups
+	var fetchedGroups model.UserGroups
 	fetchedGroups.UserId = userId
 	var groups []model.Group
 
