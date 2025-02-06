@@ -31,7 +31,7 @@ type JoinGroup struct {
 	GroupId GroupId
 }
 
-type FetchedGroups struct {
+type UserGroups struct {
 	UserId UserId
 	Groups []Group
 }
@@ -41,7 +41,7 @@ type PublicSetting struct {
 	PublicGroupId GroupId
 }
 
-type GroupMember struct {
+type GroupMembers struct {
 	GroupId GroupId
 	Members []UserId
 }
