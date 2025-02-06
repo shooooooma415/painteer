@@ -4,6 +4,7 @@ import (
 	"painteer/model"
 	userPostgresql "painteer/repository/auth/postgresql"
 	postPostgresql "painteer/repository/posting/postgresql"
+	groupPostgresql "painteer/repository/group/postgresql"
 	"testing"
 )
 

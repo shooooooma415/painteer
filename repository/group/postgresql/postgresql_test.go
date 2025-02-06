@@ -145,7 +145,7 @@ func TestCreateAndInsertGroup(t *testing.T) {
 				Icon:      "hoge",
 				Password:  "test",
 			},
-			InsertGroup: &model.InsertGroup{
+			insertGroup: &model.InsertGroup{
 				UserId: 12345678234567,
 			},
 			want:      nil,
