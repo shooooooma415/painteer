@@ -34,7 +34,7 @@ func (q *PaintRepositoryImpl) CountPostsByPrefecture(groupId model.GroupId) (*mo
 	counts := model.Count{}
 
 	for rows.Next() {
-		var countByPrefecture model.CountByPrefectureID
+		var countByPrefecture model.CountPostByPrefectureID
 		if err := rows.Scan(&countByPrefecture.PrefectureId, &countByPrefecture.PostCount); err != nil {
 			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
