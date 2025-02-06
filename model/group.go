@@ -26,7 +26,7 @@ type VerifyPassword struct {
 	GroupName GroupName
 }
 
-type JoinGroup struct {
+type InsertGroup struct {
 	UserId  UserId
 	GroupId GroupId
 }
