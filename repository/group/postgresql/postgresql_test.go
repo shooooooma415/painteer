@@ -5,38 +5,13 @@ import (
 	userPostgresql "painteer/repository/auth/postgresql"
 	groupPostgresql "painteer/repository/group/postgresql"
 	setupDB "painteer/repository/utils"
+	testUtils "painteer/repository/testUtils"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 	_ "github.com/lib/pq"
 )
 
-func createUserAndGroupForTest(
-	t *testing.T,
-	userRepository *userPostgresql.AuthRepositoryImpl,
-	groupRepository *groupPostgresql.GroupRepositoryImpl,
-	createUser model.CreateUser,
-	createGroup model.CreateGroup,
-) (*model.User, *model.Group, error) {
-	t.Helper()
-
-	createdUser, err := userRepository.CreateUser(createUser)
-	if err != nil {
-		t.Fatalf("CreateUser() error = %v", err)
-	}
-	if createdUser == nil {
-		t.Fatal("CreateUser() returned nil, expected valid User")
-	}
-
-	createGroup.AuthorId = createdUser.UserId
-
-	createdGroup, err := groupRepository.CreateGroup(createGroup)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return createdUser, createdGroup, nil
-}
 
 func TestCreateGroup(t *testing.T) {
 	testCases := []struct {
@@ -95,7 +70,7 @@ func TestCreateGroup(t *testing.T) {
 			var err error
 
 			if tc.createAuthor != nil {
-				createdUser, gotGroup, err = createUserAndGroupForTest(t, userRepository, groupRepository, *tc.createAuthor, tc.createGroup)
+				createdUser, gotGroup, err = testUtils.CreateUserAndGroupForTest(t, userRepository, groupRepository, *tc.createAuthor, tc.createGroup)
 			} else {
 				gotGroup, err = groupRepository.CreateGroup(tc.createGroup)
 			}
@@ -332,7 +307,7 @@ func TestCreateUserAndGroupAndFindGroupID(t *testing.T) {
 			var err error
 
 			if tc.createGroup.GroupName != "" {
-				_, createdGroup, err = createUserAndGroupForTest(t, userRepository, groupRepository, tc.createAuthor, tc.createGroup)
+				_, createdGroup, err = testUtils.CreateUserAndGroupForTest(t, userRepository, groupRepository, tc.createAuthor, tc.createGroup)
 				if err != nil {
 					t.Fatalf("Failed to create user and group: %v", err)
 				}
