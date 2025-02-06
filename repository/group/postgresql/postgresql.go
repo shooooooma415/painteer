@@ -41,19 +41,19 @@ func (q *GroupRepositoryImpl) CreateGroup(createGroup model.CreateGroup) (*model
 	return &createdGroup, nil
 }
 
-func (q *GroupRepositoryImpl) JoinGroup(joinGroup model.JoinGroup) (*model.JoinGroup, error) {
+func (q *GroupRepositoryImpl) InsertGroup(InsertGroup model.InsertGroup) (*model.InsertGroup, error) {
 	query := `
 		INSERT INTO user_group (group_id, user_id)
 		VALUES ($1, $2)
 		RETURNING group_id, user_id
 	`
 
-	var joinedGroup model.JoinGroup
+	var joinedGroup model.InsertGroup
 
 	err := q.db.QueryRow(
 		query,
-		joinGroup.GroupId,
-		joinGroup.UserId,
+		InsertGroup.GroupId,
+		InsertGroup.UserId,
 	).Scan(
 		&joinedGroup.GroupId,
 		&joinedGroup.UserId,
@@ -64,31 +64,7 @@ func (q *GroupRepositoryImpl) JoinGroup(joinGroup model.JoinGroup) (*model.JoinG
 	return &joinedGroup, nil
 }
 
-func (q *GroupRepositoryImpl) FindGroupIDByPasswordAndName(verifyPassword model.VerifyPassword) (*model.GroupId, error) {
-	query := `
-			SELECT id FROM groups
-			WHERE password = $1
-			AND name = $2
-	`
-	var groupId model.GroupId
-	err := q.db.QueryRow(
-		query,
-		verifyPassword.Password,
-		verifyPassword.GroupName,
-	).Scan(
-		&groupId,
-	)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("group not found: password=%s, name=%s", verifyPassword.Password, verifyPassword.GroupName)
-		}
-		return nil, fmt.Errorf("failed to join group: %w", err)
-	}
-
-	return &groupId, nil
-}
-
-func (q *GroupRepositoryImpl) IsUserExist(joinGroup model.JoinGroup) (bool, error) {
+func (q *GroupRepositoryImpl) IsUserExist(InsertGroup model.InsertGroup) (bool, error) {
 	query := `
 		SELECT EXISTS(
 			SELECT 1 FROM user_group
@@ -98,7 +74,7 @@ func (q *GroupRepositoryImpl) IsUserExist(joinGroup model.JoinGroup) (bool, erro
 	`
 
 	var isExist bool
-	err := q.db.QueryRow(query, joinGroup.UserId, joinGroup.GroupId).Scan(&isExist)
+	err := q.db.QueryRow(query, InsertGroup.UserId, InsertGroup.GroupId).Scan(&isExist)
 	if err != nil {
 		return false, fmt.Errorf("failed to check user existence in group: %w", err)
 	}
