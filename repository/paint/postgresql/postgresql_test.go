@@ -55,7 +55,7 @@ func TestCreateUserAndPostAndFetchPostCount(t *testing.T) {
 
 	userRepository := userPostgresql.NewAuthRepository(db)
 	postRepository := postPostgresql.NewPostRepository(db)
-	pantRepository := paintPostgresql.NewPaintRepository(db)
+	paintRepository := paintPostgresql.NewPaintRepository(db)
 
 	for _, tc := range testCases {
 		tc := tc
@@ -64,7 +64,7 @@ func TestCreateUserAndPostAndFetchPostCount(t *testing.T) {
 			_, createdPost := testUtils.CreateUserAndPostForTest(t, userRepository, postRepository, tc.createUser, tc.uploadPost)
 
 			// 投稿数を取得
-			count, err := pantRepository.CountPostsByPrefecture(createdPost.GroupId)
+			count, err := paintRepository.CountPostsByPrefecture(createdPost.GroupId)
 			if err != nil {
 				t.Fatalf("CountPostsByPrefecture() error = %v", err)
 			}
