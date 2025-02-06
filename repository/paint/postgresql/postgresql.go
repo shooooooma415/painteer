@@ -23,7 +23,7 @@ func (q *PaintRepositoryImpl) CountPostsByPrefecture(groupId model.GroupId) (*mo
 		WHERE ps.group_id = $1
 		GROUP BY p.prefecture_id
 		ORDER BY p.prefecture_id
-`
+	`
 
 	rows, err := q.db.Query(query, groupId)
 	if err != nil {
@@ -31,10 +31,12 @@ func (q *PaintRepositoryImpl) CountPostsByPrefecture(groupId model.GroupId) (*mo
 	}
 	defer rows.Close()
 
-	counts := model.Count{}
+	counts := model.Count{
+		Data: make([]model.CountPostByPrefectureId, 0),
+	}
 
 	for rows.Next() {
-		var countByPrefecture model.CountPostByPrefectureID
+		var countByPrefecture model.CountPostByPrefectureId
 		if err := rows.Scan(&countByPrefecture.PrefectureId, &countByPrefecture.PostCount); err != nil {
 			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
@@ -47,3 +49,4 @@ func (q *PaintRepositoryImpl) CountPostsByPrefecture(groupId model.GroupId) (*mo
 
 	return &counts, nil
 }
+
