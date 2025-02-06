@@ -93,3 +93,36 @@ func (q *PostRepositoryImpl) FindPostByID(postId model.PostId) (*model.Post, err
 
 	return &fetchedPost, nil
 }
+
+func (q *PostRepositoryImpl) FindPostIDByPrefectureIDAndGroupID(prefectureIDAndGroupID model.PrefectureIDAndGroupID) (*model.Post, error) {
+	query := `
+		SELECT p.id, p.image, p.comment, p.prefecture_id, p.user_id, p.date, p.longitude, p.latitude
+		FROM posts p
+		INNER JOIN public_setting ps ON p.id = ps.post_id
+		WHERE p.prefecture_id = $1
+		AND ps.group_id = $2
+	`
+
+	var post model.Post
+	err := q.db.QueryRow(
+		query,
+		prefectureIDAndGroupID.PrefectureId,
+		prefectureIDAndGroupID.GroupId,
+	).Scan(
+		&post.PostId,
+		&post.Image,
+		&post.Comment,
+		&post.PrefectureId,
+		&post.UserId,
+		&post.Date,
+		&post.Longitude,
+		&post.Latitude,
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to find post by prefecture_id and group_id: %w", err)
+	}
+
+	return &post, nil
+}
+
