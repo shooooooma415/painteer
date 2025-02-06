@@ -103,9 +103,9 @@ func (q *GroupRepositoryImpl) FindGroupByID(groupId model.GroupId) (*model.Group
 	return &foundGroup, nil
 }
 
-func (q *GroupRepositoryImpl) FindGroupMembersByID(groupId model.GroupId) (*model.GroupMember, error) {
+func (q *GroupRepositoryImpl) FindGroupMembersByGroupID(groupId model.GroupId) (*model.GroupMembers, error) {
 	query := `
-		SELECT ug.group_id, u.name
+		SELECT ug.group_id, u.id
 		FROM user_group ug
 		LEFT JOIN users u
 		ON ug.user_id = u.id
@@ -118,15 +118,15 @@ func (q *GroupRepositoryImpl) FindGroupMembersByID(groupId model.GroupId) (*mode
 	}
 	defer rows.Close()
 
-	var members []model.UserName
+	var members []model.UserId
 	var fetchedGroupId model.GroupId
 
 	firstRow := true
 	for rows.Next() {
-		var userName model.UserName
+		var userId model.UserId
 		var currentGroupId model.GroupId
 
-		if err := rows.Scan(&currentGroupId, &userName); err != nil {
+		if err := rows.Scan(&currentGroupId, &userId); err != nil {
 			return nil, fmt.Errorf("failed to scan user_name: %w", err)
 		}
 
@@ -135,7 +135,7 @@ func (q *GroupRepositoryImpl) FindGroupMembersByID(groupId model.GroupId) (*mode
 			firstRow = false
 		}
 
-		members = append(members, userName)
+		members = append(members, userId)
 	}
 
 	if err = rows.Err(); err != nil {
@@ -146,7 +146,7 @@ func (q *GroupRepositoryImpl) FindGroupMembersByID(groupId model.GroupId) (*mode
 		return nil, fmt.Errorf("no members found for group_id: %d", groupId)
 	}
 
-	returnValue := model.GroupMember{
+	returnValue := model.GroupMembers{
 		GroupId: fetchedGroupId,
 		Members: members,
 	}
