@@ -30,3 +30,12 @@ type DeletePost struct {
 	PostId PostId
 	UserId UserId
 }
+
+type PrefectureIDAndGroupIDs struct {
+	PrefectureId PrefectureId
+	GroupIds     []GroupId
+}
+
+type Posts struct {
+	Posts []Post
+}
