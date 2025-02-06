@@ -82,7 +82,7 @@ func (q *GroupRepositoryImpl) IsUserExist(InsertGroup model.InsertGroup) (bool, 
 	return isExist, nil
 }
 
-func (q *GroupRepositoryImpl) FindGroupByID(groupId model.GroupId) (*model.Group, error) {
+func (q *GroupRepositoryImpl) FindGroupByGroupID(groupId model.GroupId) (*model.Group, error) {
 	query := `
 		SELECT id, name, icon, password, author_id
 		FROM groups
