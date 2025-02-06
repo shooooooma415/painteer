@@ -94,7 +94,7 @@ func (q *PostRepositoryImpl) FindPostByID(postId model.PostId) (*model.Post, err
 	return &fetchedPost, nil
 }
 
-func (q *PostRepositoryImpl) FindPostIDByPrefectureIDAndGroupID(prefectureIDAndGroupID model.PrefectureIDAndGroupID) (*model.Post, error) {
+func (q *PostRepositoryImpl) FindPostByPrefectureIDAndGroupID(prefectureIDAndGroupID model.PrefectureIDAndGroupID) (*model.Post, error) {
 	query := `
 		SELECT p.id, p.image, p.comment, p.prefecture_id, p.user_id, p.date, p.longitude, p.latitude
 		FROM posts p
