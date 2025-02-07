@@ -3,17 +3,23 @@ package handler
 import (
 	"net/http"
 	"painteer/model"
-	"painteer/service/auth"
+	"painteer/service"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
-type AuthHandlerImpl struct {
-	authService auth.AuthService
+type AuthHandler interface {
+	SignUp(c echo.Context) error
+	SignIn(c echo.Context) error
+	GetUserByID(c echo.Context) error
 }
 
-func NewAuthHandler(authService auth.AuthService) *AuthHandlerImpl {
+type AuthHandlerImpl struct {
+	authService service.AuthService
+}
+
+func NewAuthHandler(authService service.AuthService) *AuthHandlerImpl {
 	return &AuthHandlerImpl{authService: authService}
 }
 
