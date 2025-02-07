@@ -95,13 +95,13 @@ func TestCreateGroup(t *testing.T) {
 	}
 }
 
-func TestCreateAndInsertGroup(t *testing.T) {
+func TestCreateAndCreateUserGroup(t *testing.T) {
 	testCases := []struct {
 		name         string
 		createAuthor *model.CreateUser
 		createGroup  *model.CreateGroup
-		insertGroup    *model.InsertGroup
-		want         *model.InsertGroup
+		createUserGroup    *model.CreateUserGroup
+		want         *model.CreateUserGroup
 		expectErr    bool
 	}{
 		{
@@ -116,7 +116,7 @@ func TestCreateAndInsertGroup(t *testing.T) {
 				Icon:      "hoge",
 				Password:  "test",
 			},
-			want:      &model.InsertGroup{},
+			want:      &model.CreateUserGroup{},
 			expectErr: false,
 		},
 		{
@@ -127,7 +127,7 @@ func TestCreateAndInsertGroup(t *testing.T) {
 				AuthId:   "hoge",
 			},
 			createGroup: nil,
-			insertGroup: &model.InsertGroup{
+			createUserGroup: &model.CreateUserGroup{
 				GroupId: 12345678234567,
 			},
 			want:      nil,
@@ -145,7 +145,7 @@ func TestCreateAndInsertGroup(t *testing.T) {
 				Icon:      "hoge",
 				Password:  "test",
 			},
-			insertGroup: &model.InsertGroup{
+			createUserGroup: &model.CreateUserGroup{
 				UserId: 12345678234567,
 			},
 			want:      nil,
@@ -187,14 +187,14 @@ func TestCreateAndInsertGroup(t *testing.T) {
 				}
 			}
 
-			if tc.insertGroup == nil {
-				tc.insertGroup = &model.InsertGroup{
+			if tc.createUserGroup == nil {
+				tc.createUserGroup = &model.CreateUserGroup{
 					UserId:  createdUser.UserId,
 					GroupId: createdGroup.GroupId,
 				}
 			}
 
-			gotInsertGroup, err := groupRepository.InsertGroup(*tc.insertGroup)
+			gotCreateUserGroup, err := groupRepository.CreateUserGroup(*tc.createUserGroup)
 
 			if tc.expectErr {
 				if err == nil {
@@ -206,14 +206,14 @@ func TestCreateAndInsertGroup(t *testing.T) {
 			}
 
 			if err != nil {
-				t.Fatalf("InsertGroup() error = %v", err)
+				t.Fatalf("CreateUserGroup() error = %v", err)
 			}
 
-			tc.want.UserId = tc.insertGroup.UserId
-			tc.want.GroupId = tc.insertGroup.GroupId
+			tc.want.UserId = tc.createUserGroup.UserId
+			tc.want.GroupId = tc.createUserGroup.GroupId
 
-			if diff := cmp.Diff(tc.want, gotInsertGroup); diff != "" {
-				t.Fatalf("InsertGroup() mismatch (-want +got):\n%s", diff)
+			if diff := cmp.Diff(tc.want, gotCreateUserGroup); diff != "" {
+				t.Fatalf("CreateUserGroup() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}

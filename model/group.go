@@ -26,7 +26,7 @@ type PasswordAndName struct {
 	GroupName GroupName
 }
 
-type InsertGroup struct {
+type CreateUserGroup struct {
 	UserId  UserId
 	GroupId GroupId
 }

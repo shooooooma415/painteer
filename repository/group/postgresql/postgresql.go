@@ -41,19 +41,19 @@ func (q *GroupRepositoryImpl) CreateGroup(createGroup model.CreateGroup) (*model
 	return &createdGroup, nil
 }
 
-func (q *GroupRepositoryImpl) InsertGroup(InsertGroup model.InsertGroup) (*model.InsertGroup, error) {
+func (q *GroupRepositoryImpl) CreateUserGroup(createUserGroup model.CreateUserGroup) (*model.CreateUserGroup, error) {
 	query := `
 		INSERT INTO user_group (group_id, user_id)
 		VALUES ($1, $2)
 		RETURNING group_id, user_id
 	`
 
-	var joinedGroup model.InsertGroup
+	var joinedGroup model.CreateUserGroup
 
 	err := q.db.QueryRow(
 		query,
-		InsertGroup.GroupId,
-		InsertGroup.UserId,
+		createUserGroup.GroupId,
+		createUserGroup.UserId,
 	).Scan(
 		&joinedGroup.GroupId,
 		&joinedGroup.UserId,
