@@ -27,14 +27,12 @@ func SignUp(authService service.AuthService) echo.HandlerFunc {
 
 func SignIn(authService service.AuthService) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var req struct {
-			AuthId string `json:"auth_id"`
-		}
-		if err := c.Bind(&req); err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
+		authIdStr := c.QueryParam("auth_id")
+		if authIdStr == "" {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Missing auth_id"})
 		}
 
-		user, err := authService.AuthenticateUser(model.AuthId(req.AuthId))
+		user, err := authService.AuthenticateUser(model.AuthId(authIdStr))
 		if err != nil {
 			return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Invalid credentials"})
 		}
@@ -45,7 +43,7 @@ func SignIn(authService service.AuthService) echo.HandlerFunc {
 
 func GetUserByID(authService service.AuthService) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		userIdStr := c.Param("user_id")
+		userIdStr := c.QueryParam("user_id")
 		userId, err := strconv.Atoi(userIdStr)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid user_id"})
