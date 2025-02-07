@@ -6,6 +6,13 @@ import (
 	post "painteer/repository/posting"
 )
 
+type PostingService interface {
+	CreatePost(uploadPost model.UploadPost) (*model.PostId, error)
+	DeletePost(postId model.PostId) (*model.PostId, error)
+	GetPostByID(postId model.PostId) (*model.Post, error)
+	GetPostsByPrefectureIDAndGroupIDs(prefectureIDAndGroupIDs model.PrefectureIDAndGroupIDs) (*model.Posts, error)
+}
+
 type PostingsServiceImpl struct {
 	repo post.PostingsRepository
 }
