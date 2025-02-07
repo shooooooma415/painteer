@@ -52,11 +52,7 @@ const (
 	Okinawa     PrefectureId = 47
 )
 
-type CountPostByPrefectureId struct {
+type PostsByPrefecture struct {
 	PrefectureId PrefectureId
-	PostCount    int
-}
-
-type Count struct {
-	Data []CountPostByPrefectureId
+	PostIds    []PostId
 }

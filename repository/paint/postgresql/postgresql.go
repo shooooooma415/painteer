@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"painteer/model"
+	"github.com/lib/pq"
 )
 
 type PaintRepositoryImpl struct {
@@ -14,12 +15,11 @@ func NewPaintRepository(db *sql.DB) *PaintRepositoryImpl {
 	return &PaintRepositoryImpl{db: db}
 }
 
-func (q *PaintRepositoryImpl) CountPostsByPrefecture(groupId model.GroupId) (*model.Count, error) {
+func (q *PaintRepositoryImpl) FindPostIDsByPrefecture(groupId model.GroupId) ([]model.PostsByPrefecture, error) {
 	query := `
-		SELECT p.prefecture_id, COUNT(p.id) AS post_count
+		SELECT p.prefecture_id, ARRAY_AGG(p.id) AS post_ids
 		FROM posts p
-		INNER JOIN public_setting ps
-		ON p.id = ps.post_id
+		INNER JOIN public_setting ps ON p.id = ps.post_id
 		WHERE ps.group_id = $1
 		GROUP BY p.prefecture_id
 		ORDER BY p.prefecture_id
@@ -27,26 +27,24 @@ func (q *PaintRepositoryImpl) CountPostsByPrefecture(groupId model.GroupId) (*mo
 
 	rows, err := q.db.Query(query, groupId)
 	if err != nil {
-		return nil, fmt.Errorf("failed to count posts by prefecture for group_id %v: %w", groupId, err)
+		return nil, fmt.Errorf("failed to find post IDs by prefecture for group_id %v: %w", groupId, err)
 	}
 	defer rows.Close()
 
-	counts := model.Count{
-		Data: make([]model.CountPostByPrefectureId, 0),
-	}
+	var result []model.PostsByPrefecture
 
 	for rows.Next() {
-		var countByPrefecture model.CountPostByPrefectureId
-		if err := rows.Scan(&countByPrefecture.PrefectureId, &countByPrefecture.PostCount); err != nil {
+		var postsByPrefecture model.PostsByPrefecture
+		if err := rows.Scan(&postsByPrefecture.PrefectureId, pq.Array(&postsByPrefecture.PostIds)); err != nil {
 			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
-		counts.Data = append(counts.Data, countByPrefecture)
+		result = append(result, postsByPrefecture)
 	}
 
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("rows iteration error: %w", err)
 	}
 
-	return &counts, nil
+	return result, nil
 }
 
