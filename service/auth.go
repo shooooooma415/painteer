@@ -24,7 +24,7 @@ func (s *AuthServiceImpl) RegisterUser(user model.CreateUser) (*model.User, erro
 }
 
 func (s *AuthServiceImpl) AuthenticateUser(authId model.AuthId) (*model.User, error) {
-	return s.repo.SignInUser(authId)
+	return s.repo.FindUserByAuthID(authId)
 }
 
 func (s *AuthServiceImpl) GetUserByID(userId model.UserId) (*model.User, error) {
