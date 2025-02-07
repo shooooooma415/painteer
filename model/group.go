@@ -49,3 +49,9 @@ type GroupMembers struct {
 type PasswordAndNames struct {
 	Groups []PasswordAndName
 }
+
+type GroupSummary struct {
+	GroupId   GroupId
+	GroupName GroupName
+	Icon      string
+}
