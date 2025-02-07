@@ -88,6 +88,21 @@ func (s *GroupServiceImpl) GetGroupMembersByGroupID(groupId model.GroupId) (*mod
 	return s.repo.FindGroupMembersByGroupID(groupId)
 }
 
+func (s *GroupServiceImpl) GetGroupSummaryByGroupID(groupId model.GroupId) (*model.GroupSummary, error) {
+	group, err := s.repo.FindGroupByGroupID(groupId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find group: %w", err)
+	}
+
+	GroupSummary := model.GroupSummary{
+		GroupId:   group.GroupId,
+		GroupName: group.GroupName,
+		Icon:      group.Icon,
+	}
+
+	return &GroupSummary, nil
+}
+
 func (s *GroupServiceImpl) RegisterPublicSetting(publicSetting model.PublicSetting) (*model.PublicSetting, error) {
 	return s.repo.CreatePublicSetting(publicSetting)
 }
