@@ -66,7 +66,22 @@ func (s *GroupServiceImpl) JoinGroup(joinGroup model.JoinGroup) (*model.GroupId,
 }
 
 func (s *GroupServiceImpl) GetUserGroupSummaryByUserID(userId model.UserId) ([]model.GroupSummary, error) {
+	groups, err := s.repo.FindUserGroupsByUserID(userId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find group: %w", err)
+	}
 
+	var groupSummaries []model.GroupSummary
+	for _, group := range groups.Groups {
+		summary := model.GroupSummary{
+			GroupId:   group.GroupId,
+			GroupName: group.GroupName,
+			Icon:      group.Icon,
+		}
+		groupSummaries = append(groupSummaries, summary)
+	}
+
+	return groupSummaries, nil
 }
 
 func (s *GroupServiceImpl) GetGroupMembersByGroupID(groupId model.GroupId) (*model.GroupMembers, error) {
