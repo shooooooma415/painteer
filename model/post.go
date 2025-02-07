@@ -41,7 +41,3 @@ type PrefectureIDAndGroupIDs struct {
 	PrefectureId PrefectureId
 	GroupIds     []GroupId
 }
-
-type Posts struct {
-	Posts []Post
-}

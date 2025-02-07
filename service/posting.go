@@ -33,7 +33,7 @@ func (s *PostingsServiceImpl) GetPostByID(postId model.PostId) (*model.Post, err
 	return s.repo.FindPostByID(postId)
 }
 
-func (s *PostingsServiceImpl) GetPostsByPrefectureIDAndGroupIDs(prefectureIDAndGroupIDs model.PrefectureIDAndGroupIDs) (*model.Posts, error) {
+func (s *PostingsServiceImpl) GetPostsByPrefectureIDAndGroupIDs(prefectureIDAndGroupIDs model.PrefectureIDAndGroupIDs) ([]model.Post, error) {
 	var posts []model.Post
 
 	for _, groupId := range prefectureIDAndGroupIDs.GroupIds {
@@ -42,20 +42,17 @@ func (s *PostingsServiceImpl) GetPostsByPrefectureIDAndGroupIDs(prefectureIDAndG
 			GroupId:      groupId,
 		}
 
-		post, err := s.repo.FindPostByPrefectureIDAndGroupID(prefectureIDAndGroupID)
+		groupPosts, err := s.repo.FindPostsByPrefectureIDAndGroupID(prefectureIDAndGroupID)
 		if err != nil {
-			fmt.Printf("Error fetching post for PrefectureId %v and GroupId %v: %v\n", prefectureIDAndGroupIDs.PrefectureId, groupId, err)
+			fmt.Printf("Error fetching posts for PrefectureId %v and GroupId %v: %v\n", prefectureIDAndGroupIDs.PrefectureId, groupId, err)
 			continue
 		}
 
-		if post != nil {
-			posts = append(posts, *post)
+		if len(groupPosts) > 0 {
+			posts = append(posts, groupPosts...)
 		}
 	}
 
-	if len(posts) == 0 {
-		return &model.Posts{Posts: []model.Post{}}, nil
-	}
-
-	return &model.Posts{Posts: posts}, nil
+	return posts, nil
 }
+
