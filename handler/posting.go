@@ -49,3 +49,33 @@ func UploadPost(postingService service.PostingService, groupService service.Grou
 		})
 	}
 }
+
+func GetPosts(postingService service.PostingService) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var req model.GetPostsRequest
+		if err := c.Bind(&req); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
+		}
+
+		prefectureId, exists := model.PrefectureNameToId[req.PrefectureId]
+		if !exists {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid prefecture name"})
+		}
+		groupIds := make([]model.GroupId, len(req.Groups))
+		for i, id := range req.Groups {
+			groupIds[i] = model.GroupId(id)
+		}
+
+		prefectureIDAndGroupIDs := model.PrefectureIDAndGroupIDs{
+			PrefectureId: prefectureId,
+			GroupIds:     groupIds,
+		}
+
+		posts, err := postingService.GetPostsByPrefectureIDAndGroupIDs(prefectureIDAndGroupIDs)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		}
+
+		return c.JSON(http.StatusOK, posts)
+	}
+}

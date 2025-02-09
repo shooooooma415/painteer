@@ -51,3 +51,8 @@ type UploadPostRequest struct {
 	UserId       int       `json:"user_id"`
 	Groups       []int     `json:"groups"`
 }
+
+type GetPostsRequest struct {
+	PrefectureId string `json:"prefecture_id"`
+	Groups       []int  `json:"groups"`
+}
