@@ -94,7 +94,7 @@ func (q *PostRepositoryImpl) FindPostByID(postId model.PostId) (*model.Post, err
 	return &fetchedPost, nil
 }
 
-func (q *PostRepositoryImpl) FindPostByPrefectureIDAndGroupID(prefectureIDAndGroupID model.PrefectureIDAndGroupID) (*model.Post, error) {
+func (q *PostRepositoryImpl) FindPostsByPrefectureIDAndGroupID(prefectureIDAndGroupID model.PrefectureIDAndGroupID) ([]model.Post, error) {
 	query := `
 		SELECT p.id, p.image, p.comment, p.prefecture_id, p.user_id, p.date, p.longitude, p.latitude
 		FROM posts p
@@ -103,26 +103,38 @@ func (q *PostRepositoryImpl) FindPostByPrefectureIDAndGroupID(prefectureIDAndGro
 		AND ps.group_id = $2
 	`
 
-	var post model.Post
-	err := q.db.QueryRow(
+	rows, err := q.db.Query(
 		query,
 		prefectureIDAndGroupID.PrefectureId,
 		prefectureIDAndGroupID.GroupId,
-	).Scan(
-		&post.PostId,
-		&post.Image,
-		&post.Comment,
-		&post.PrefectureId,
-		&post.UserId,
-		&post.Date,
-		&post.Longitude,
-		&post.Latitude,
 	)
-
 	if err != nil {
-		return nil, fmt.Errorf("failed to find post by prefecture_id and group_id: %w", err)
+		return nil, fmt.Errorf("failed to find posts by prefecture_id and group_id: %w", err)
+	}
+	defer rows.Close()
+
+	var posts []model.Post
+	for rows.Next() {
+		var post model.Post
+		if err := rows.Scan(
+			&post.PostId,
+			&post.Image,
+			&post.Comment,
+			&post.PrefectureId,
+			&post.UserId,
+			&post.Date,
+			&post.Longitude,
+			&post.Latitude,
+		); err != nil {
+			return nil, fmt.Errorf("failed to scan row: %w", err)
+		}
+		posts = append(posts, post)
 	}
 
-	return &post, nil
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("rows iteration error: %w", err)
+	}
+
+	return posts, nil
 }
 
