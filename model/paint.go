@@ -63,18 +63,6 @@ var AllPrefectureIds = []PrefectureId{
 	Oita, Miyazaki, Kagoshima, Okinawa,
 }
 
-const (
-	// 地方の ID を定義
-	HokkaidoRegion RegionId = 1
-	TohokuRegion   RegionId = 2
-	KantoRegion    RegionId = 3
-	ChubuRegion    RegionId = 4
-	KinkiRegion    RegionId = 5
-	ChugokuRegion  RegionId = 6
-	ShikokuRegion  RegionId = 7
-	KyushuRegion   RegionId = 8
-)
-
 var PrefectureNames = map[PrefectureId]string{
 	Hokkaido:  "Hokkaido",
 	Aomori:    "Aomori",
@@ -125,62 +113,17 @@ var PrefectureNames = map[PrefectureId]string{
 	Okinawa:   "Okinawa",
 }
 
-var PrefectureToRegion = map[PrefectureId]RegionId{
-	Hokkaido: HokkaidoRegion,
-
-	Aomori:    TohokuRegion,
-	Iwate:     TohokuRegion,
-	Miyagi:    TohokuRegion,
-	Akita:     TohokuRegion,
-	Yamagata:  TohokuRegion,
-	Fukushima: TohokuRegion,
-
-	Ibaraki:  KantoRegion,
-	Tochigi:  KantoRegion,
-	Gunma:    KantoRegion,
-	Saitama:  KantoRegion,
-	Chiba:    KantoRegion,
-	Tokyo:    KantoRegion,
-	Kanagawa: KantoRegion,
-
-	Niigata:   ChubuRegion,
-	Toyama:    ChubuRegion,
-	Ishikawa:  ChubuRegion,
-	Fukui:     ChubuRegion,
-	Yamanashi: ChubuRegion,
-	Nagano:    ChubuRegion,
-	Gifu:      ChubuRegion,
-	Shizuoka:  ChubuRegion,
-	Aichi:     ChubuRegion,
-	Mie:       ChubuRegion,
-
-	Shiga:    KinkiRegion,
-	Kyoto:    KinkiRegion,
-	Osaka:    KinkiRegion,
-	Hyogo:    KinkiRegion,
-	Nara:     KinkiRegion,
-	Wakayama: KinkiRegion,
-
-	Tottori:   ChugokuRegion,
-	Shimane:   ChugokuRegion,
-	Okayama:   ChugokuRegion,
-	Hiroshima: ChugokuRegion,
-	Yamaguchi: ChugokuRegion,
-
-	Tokushima: ShikokuRegion,
-	Kagawa:    ShikokuRegion,
-	Ehime:     ShikokuRegion,
-	Kochi:     ShikokuRegion,
-
-	Fukuoka:   KyushuRegion,
-	Saga:      KyushuRegion,
-	Nagasaki:  KyushuRegion,
-	Kumamoto:  KyushuRegion,
-	Oita:      KyushuRegion,
-	Miyazaki:  KyushuRegion,
-	Kagoshima: KyushuRegion,
-	Okinawa:   KyushuRegion,
+var RegionMap = map[string][]PrefectureId{
+	"Hokkaido":       {Hokkaido},
+	"Tohoku":         {Aomori, Iwate, Miyagi, Akita, Yamagata, Fukushima},
+	"Kanto":          {Ibaraki, Tochigi, Gunma, Saitama, Chiba, Tokyo, Kanagawa},
+	"Chubu":          {Niigata, Toyama, Ishikawa, Fukui, Yamanashi, Nagano, Gifu, Shizuoka, Aichi},
+	"Kinki":          {Mie, Shiga, Kyoto, Osaka, Hyogo, Nara, Wakayama},
+	"Chugoku":        {Tottori, Shimane, Okayama, Hiroshima, Yamaguchi},
+	"Shikoku":        {Tokushima, Kagawa, Ehime, Kochi},
+	"Kyushu/Okinawa": {Fukuoka, Saga, Nagasaki, Kumamoto, Oita, Miyazaki, Kagoshima, Okinawa},
 }
+
 
 func GetPrefectureName(prefectureId PrefectureId) string {
 	name, exists := PrefectureNames[prefectureId]

@@ -56,31 +56,26 @@ func (s *PaintServiceImpl) CountPostIDsByRegion(groupIds []model.GroupId) ([]mod
 		return nil, fmt.Errorf("failed to count posts by prefecture: %w", err)
 	}
 
-	regionMap := map[string][]model.PrefectureId{
-		"Hokkaido":       {model.Hokkaido},
-		"Tohoku":         {model.Aomori, model.Iwate, model.Miyagi, model.Akita, model.Yamagata, model.Fukushima},
-		"Kanto":          {model.Ibaraki, model.Tochigi, model.Gunma, model.Saitama, model.Chiba, model.Tokyo, model.Kanagawa},
-		"Chubu":          {model.Niigata, model.Toyama, model.Ishikawa, model.Fukui, model.Yamanashi, model.Nagano, model.Gifu, model.Shizuoka, model.Aichi},
-		"Kinki":          {model.Mie, model.Shiga, model.Kyoto, model.Osaka, model.Hyogo, model.Nara, model.Wakayama},
-		"Chugoku":        {model.Tottori, model.Shimane, model.Okayama, model.Hiroshima, model.Yamaguchi},
-		"Shikoku":        {model.Tokushima, model.Kagawa, model.Ehime, model.Kochi},
-		"Kyushu/Okinawa": {model.Fukuoka, model.Saga, model.Nagasaki, model.Kumamoto, model.Oita, model.Miyazaki, model.Kagoshima, model.Okinawa},
+	regionCounts := make(map[string]int)
+	for region := range model.RegionMap {
+		regionCounts[region] = 0
 	}
 
-	regionCounts := make(map[string]int)
-
+	prefectureToRegion := make(map[string]string)
+	for region, prefectures := range model.RegionMap {
+		for _, prefId := range prefectures {
+			prefectureName := model.GetPrefectureName(prefId)
+			prefectureToRegion[prefectureName] = region
+		}
+	}
+	
 	for _, count := range prefectureCounts {
-		for region, prefectures := range regionMap {
-			for _, prefectureId := range prefectures {
-				if count.Prefecture == model.GetPrefectureName(prefectureId) {
-					regionCounts[region] += count.PostCount
-					break
-				}
-			}
+		if region, exists := prefectureToRegion[count.Prefecture]; exists {
+			regionCounts[region] += count.PostCount
 		}
 	}
 
-	countsByRegion := make([]model.CountsByRegion, 0, len(regionCounts))
+	countsByRegion := make([]model.CountsByRegion, 0, len(model.RegionMap))
 	for region, count := range regionCounts {
 		countsByRegion = append(countsByRegion, model.CountsByRegion{
 			Region:    region,
