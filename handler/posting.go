@@ -38,7 +38,7 @@ func UploadPost(postingService service.PostingService, groupService service.Grou
 				PublicGroupId: model.GroupId(groupId),
 			}
 
-			if err := groupService.PublicSetting(publicSetting); err != nil {
+			if _, err := groupService.RegisterPublicSetting(publicSetting); err != nil {
 				return c.JSON(http.StatusInternalServerError, map[string]string{
 					"error": fmt.Sprintf("Failed to set public setting for group %d", groupId),
 				})
