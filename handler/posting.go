@@ -79,3 +79,32 @@ func GetPosts(postingService service.PostingService) echo.HandlerFunc {
 		return c.JSON(http.StatusOK, posts)
 	}
 }
+
+func GetPost(postingService service.PostingService, authService service.AuthService) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var req model.PostId
+		if err := c.Bind(&req); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
+		}
+
+		post, err := postingService.GetPostByID(model.PostId(req))
+		if err != nil {
+			return c.JSON(http.StatusNotFound, map[string]string{"error": "Post not found"})
+		}
+
+		user, err := authService.GetUserByID(post.UserId)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to get user info"})
+		}
+
+		response := model.GetPostsResponse{
+			UserName: user.UserName,
+			UserId:   post.UserId,
+			Image:    post.Image,
+			Comment:  post.Comment,
+			Date:     post.Date,
+		}
+
+		return c.JSON(http.StatusOK, response)
+	}
+}

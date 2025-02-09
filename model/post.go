@@ -56,3 +56,11 @@ type GetPostsRequest struct {
 	PrefectureId string `json:"prefecture_id"`
 	Groups       []int  `json:"groups"`
 }
+
+type GetPostsResponse struct {
+	UserName UserName  `json:"user_name"`
+	UserId   UserId      `json:"user_id"`
+	Image    string    `json:"image"`
+	Comment  string    `json:"comment"`
+	Date     time.Time `json:"date"`
+}
