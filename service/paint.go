@@ -21,37 +21,34 @@ func NewPaintService(repo paint.PaintRepository) *PaintServiceImpl {
 
 func (s *PaintServiceImpl) CountPostIDsByPrefecture(groupIds []model.GroupId) ([]model.CountsByPrefecture, error) {
 	prefecturePostMap := make(map[model.PrefectureId]map[model.PostId]struct{})
-	for i := 1; i <= 47; i++ {
-		prefecturePostMap[model.PrefectureId(i)] = make(map[model.PostId]struct{})
+	for _, prefectureId := range model.AllPrefectureIds {
+		prefecturePostMap[prefectureId] = make(map[model.PostId]struct{})
 	}
-
-	allPostsByPrefecture := make([]model.PostsByPrefecture, 0)
 
 	for _, groupId := range groupIds {
 		postsByPrefecture, err := s.repo.FindPostIDsByPrefecture(groupId)
 		if err != nil {
 			return nil, fmt.Errorf("failed to find post IDs by prefecture for group %v: %w", groupId, err)
 		}
-		allPostsByPrefecture = append(allPostsByPrefecture, postsByPrefecture...)
-	}
 
-	for _, entry := range allPostsByPrefecture {
-		postSet := prefecturePostMap[entry.PrefectureId]
-		for _, postId := range entry.PostIds {
-			postSet[postId] = struct{}{}
+		for _, entry := range postsByPrefecture {
+			for _, postId := range entry.PostIds {
+				prefecturePostMap[entry.PrefectureId][postId] = struct{}{}
+			}
 		}
 	}
 
-	counts := make([]model.CountsByPrefecture, 0, 47)
-	for prefectureId, posts := range prefecturePostMap {
+	counts := make([]model.CountsByPrefecture, 0, len(model.AllPrefectureIds))
+	for _, prefectureId := range model.AllPrefectureIds {
 		counts = append(counts, model.CountsByPrefecture{
 			Prefecture: model.GetPrefectureName(prefectureId),
-			PostCount:  len(posts),
+			PostCount:  len(prefecturePostMap[prefectureId]),
 		})
 	}
 
 	return counts, nil
 }
+
 
 func (s *PaintServiceImpl) CountPostIDsByRegion(groupIds []model.GroupId) ([]model.CountsByRegion, error) {
 	prefectureCounts, err := s.CountPostIDsByPrefecture(groupIds)
@@ -74,8 +71,8 @@ func (s *PaintServiceImpl) CountPostIDsByRegion(groupIds []model.GroupId) ([]mod
 
 	for _, count := range prefectureCounts {
 		for region, prefectures := range regionMap {
-			for _, prefId := range prefectures {
-				if count.Prefecture == model.GetPrefectureName(prefId) {
+			for _, prefectureId := range prefectures {
+				if count.Prefecture == model.GetPrefectureName(prefectureId) {
 					regionCounts[region] += count.PostCount
 					break
 				}
