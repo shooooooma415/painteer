@@ -49,7 +49,6 @@ func (s *PaintServiceImpl) CountPostIDsByPrefecture(groupIds []model.GroupId) ([
 	return counts, nil
 }
 
-
 func (s *PaintServiceImpl) CountPostIDsByRegion(groupIds []model.GroupId) ([]model.CountsByRegion, error) {
 	prefectureCounts, err := s.CountPostIDsByPrefecture(groupIds)
 	if err != nil {
@@ -58,20 +57,17 @@ func (s *PaintServiceImpl) CountPostIDsByRegion(groupIds []model.GroupId) ([]mod
 
 	regionCounts := make(map[string]int)
 	for region := range model.RegionMap {
-		regionCounts[region] = 0
+		regionCounts[region] = 0 
 	}
 
-	prefectureToRegion := make(map[string]string)
-	for region, prefectures := range model.RegionMap {
-		for _, prefId := range prefectures {
-			prefectureName := model.GetPrefectureName(prefId)
-			prefectureToRegion[prefectureName] = region
-		}
-	}
-	
 	for _, count := range prefectureCounts {
-		if region, exists := prefectureToRegion[count.Prefecture]; exists {
-			regionCounts[region] += count.PostCount
+		for region, prefectures := range model.RegionMap {
+			for _, prefName := range prefectures {
+				if count.Prefecture == prefName {
+					regionCounts[region] += count.PostCount
+					break
+				}
+			}
 		}
 	}
 
