@@ -52,11 +52,6 @@ type UploadPostRequest struct {
 	Groups       []int     `json:"groups"`
 }
 
-type GetPostsRequest struct {
-	PrefectureId string `json:"prefecture_id"`
-	Groups       []int  `json:"groups"`
-}
-
 type PostResponse struct {
 	PostId    int     `json:"post_id"`
 	Image     string  `json:"image"`
@@ -70,7 +65,7 @@ type GetPostsResponse struct {
 
 type GetPostResponse struct {
 	UserName UserName  `json:"user_name"`
-	UserId   UserId      `json:"user_id"`
+	UserId   UserId    `json:"user_id"`
 	Image    string    `json:"image"`
 	Comment  string    `json:"comment"`
 	Date     time.Time `json:"date"`

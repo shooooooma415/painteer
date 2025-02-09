@@ -53,7 +53,7 @@ func UploadPost(postingService service.PostingService, groupService service.Grou
 
 func GetPosts(postingService service.PostingService) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		prefectureName := c.QueryParam("prefecture_id")
+		prefectureName := c.QueryParam("prefecture_name")
 		prefectureId, exists := model.PrefectureNameToId[prefectureName]
 		if !exists {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid prefecture name"})
