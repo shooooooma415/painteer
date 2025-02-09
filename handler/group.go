@@ -135,4 +135,3 @@ func GetGroup(groupService service.GroupService) echo.HandlerFunc {
         return c.JSON(http.StatusOK, response)
     }
 }
- 
