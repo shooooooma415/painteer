@@ -31,6 +31,22 @@ func RegisterGroup(groupService service.GroupService) echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		}
 
+		return c.JSON(http.StatusOK, joinedGroupId)
+	}
+}
+
+func JoinGroup(groupService service.GroupService) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var req model.JoinGroup
+		if err := c.Bind(&req); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
+		}
+
+		joinedGroupId, err := groupService.JoinGroup(req)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		}
+
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"group_id": joinedGroupId,
 		})
