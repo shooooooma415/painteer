@@ -19,7 +19,7 @@ type GroupServiceImpl struct {
 	repo group.GroupRepository
 }
 
-func NewAuthService(repo group.GroupRepository) *GroupServiceImpl {
+func NewGroupService(repo group.GroupRepository) *GroupServiceImpl {
 	return &GroupServiceImpl{repo: repo}
 }
 
@@ -31,10 +31,6 @@ func (s *GroupServiceImpl) JoinGroup(joinGroup model.JoinGroup) (*model.GroupId,
 	group, err := s.repo.FindGroupByGroupID(joinGroup.GroupId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to find group: %w", err)
-	}
-
-	if group == nil {
-		return nil, fmt.Errorf("group not found")
 	}
 
 	if group.Password != joinGroup.Password {
