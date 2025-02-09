@@ -1,5 +1,6 @@
 package model
 
+type RegionId int
 
 const (
 	// 都道府県の ID を定義
@@ -52,7 +53,87 @@ const (
 	Okinawa     PrefectureId = 47
 )
 
+const (
+	// 地方の ID を定義
+	HokkaidoRegion RegionId = 1
+	TohokuRegion   RegionId = 2
+	KantoRegion    RegionId = 3
+	ChubuRegion    RegionId = 4
+	KinkiRegion    RegionId = 5
+	ChugokuRegion  RegionId = 6
+	ShikokuRegion  RegionId = 7
+	KyushuRegion   RegionId = 8
+)
+
+var PrefectureToRegion = map[PrefectureId]RegionId{
+	Hokkaido: HokkaidoRegion,
+
+	Aomori:    TohokuRegion,
+	Iwate:     TohokuRegion,
+	Miyagi:    TohokuRegion,
+	Akita:     TohokuRegion,
+	Yamagata:  TohokuRegion,
+	Fukushima: TohokuRegion,
+
+	Ibaraki:  KantoRegion,
+	Tochigi:  KantoRegion,
+	Gunma:    KantoRegion,
+	Saitama:  KantoRegion,
+	Chiba:    KantoRegion,
+	Tokyo:    KantoRegion,
+	Kanagawa: KantoRegion,
+
+	Niigata:    ChubuRegion,
+	Toyama:     ChubuRegion,
+	Ishikawa:   ChubuRegion,
+	Fukui:      ChubuRegion,
+	Yamanashi:  ChubuRegion,
+	Nagano:     ChubuRegion,
+	Gifu:       ChubuRegion,
+	Shizuoka:   ChubuRegion,
+	Aichi:      ChubuRegion,
+	Mie:        ChubuRegion,
+
+	Shiga:     KinkiRegion,
+	Kyoto:     KinkiRegion,
+	Osaka:     KinkiRegion,
+	Hyogo:     KinkiRegion,
+	Nara:      KinkiRegion,
+	Wakayama:  KinkiRegion,
+
+	Tottori:   ChugokuRegion,
+	Shimane:   ChugokuRegion,
+	Okayama:   ChugokuRegion,
+	Hiroshima: ChugokuRegion,
+	Yamaguchi: ChugokuRegion,
+
+	Tokushima: ShikokuRegion,
+	Kagawa:    ShikokuRegion,
+	Ehime:     ShikokuRegion,
+	Kochi:     ShikokuRegion,
+
+	Fukuoka:   KyushuRegion,
+	Saga:      KyushuRegion,
+	Nagasaki:  KyushuRegion,
+	Kumamoto:  KyushuRegion,
+	Oita:      KyushuRegion,
+	Miyazaki:  KyushuRegion,
+	Kagoshima: KyushuRegion,
+	Okinawa:   KyushuRegion,
+}
+
+
 type PostsByPrefecture struct {
 	PrefectureId PrefectureId
 	PostIds    []PostId
+}
+
+type CountsByPrefecture struct {
+	PrefectureId PrefectureId
+	Count    int
+}
+
+type CountsByRegion struct {
+	PrefectureId PrefectureId
+	Count    int
 }

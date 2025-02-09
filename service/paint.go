@@ -6,9 +6,9 @@ import (
 )
 
 type PaintService interface {
-	RegisterUser(user model.CreateUser) (*model.User, error)
-	AuthenticateUser(authId model.AuthId) (*model.User, error)
-	GetUserByID(userId model.UserId) (*model.User, error)
+	CountPostIDsByPrefecture(groupIds []model.GroupId) ([]model.CountsByPrefecture, error)
+	CountPostIDsByRegion(groupIds []model.GroupId) ([]model.CountsByRegion, error)
+
 }
 
 type PaintServiceImpl struct {
@@ -18,3 +18,5 @@ type PaintServiceImpl struct {
 func NewPaintService(repo paint.PaintRepository) *PaintServiceImpl {
 	return &PaintServiceImpl{repo: repo}
 }
+
+
