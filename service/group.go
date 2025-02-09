@@ -67,7 +67,7 @@ func (s *GroupServiceImpl) GetUserGroupSummaryByUserID(userId model.UserId) ([]m
 		return nil, fmt.Errorf("failed to find group: %w", err)
 	}
 
-	var groupSummaries []model.GroupSummary
+	groupSummaries := make([]model.GroupSummary, len(groups.Groups))
 	for _, group := range groups.Groups {
 		summary := model.GroupSummary{
 			GroupId:   group.GroupId,
