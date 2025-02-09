@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"painteer/model"
 	"painteer/service"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -52,19 +53,20 @@ func UploadPost(postingService service.PostingService, groupService service.Grou
 
 func GetPosts(postingService service.PostingService) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var req model.GetPostsRequest
-		if err := c.Bind(&req); err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
-		}
-
-		prefectureId, exists := model.PrefectureNameToId[req.PrefectureId]
+		prefectureName := c.QueryParam("prefecture_id")
+		prefectureId, exists := model.PrefectureNameToId[prefectureName]
 		if !exists {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid prefecture name"})
 		}
 
-		groupIds := make([]model.GroupId, len(req.Groups))
-		for i, id := range req.Groups {
-			groupIds[i] = model.GroupId(id)
+		groupIdsStr := c.QueryParams()["groups"]
+		var groupIds []model.GroupId
+		for _, idStr := range groupIdsStr {
+			id, err := strconv.Atoi(idStr)
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid group ID"})
+			}
+			groupIds = append(groupIds, model.GroupId(id))
 		}
 
 		prefectureIDAndGroupIDs := model.PrefectureIDAndGroupIDs{
@@ -91,15 +93,15 @@ func GetPosts(postingService service.PostingService) echo.HandlerFunc {
 	}
 }
 
-
 func GetPost(postingService service.PostingService, authService service.AuthService) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var req model.PostId
-		if err := c.Bind(&req); err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
+		postIdStr := c.QueryParam("post_id")
+		postId, err := strconv.Atoi(postIdStr)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid post ID"})
 		}
 
-		post, err := postingService.GetPostByID(model.PostId(req))
+		post, err := postingService.GetPostByID(model.PostId(postId))
 		if err != nil {
 			return c.JSON(http.StatusNotFound, map[string]string{"error": "Post not found"})
 		}
