@@ -191,6 +191,6 @@ type CountsByPrefecture struct {
 }
 
 type CountsByRegion struct {
-	PrefectureId PrefectureId
-	PostCount    int
+	Region    string
+	PostCount int
 }
