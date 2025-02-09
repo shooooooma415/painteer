@@ -61,6 +61,7 @@ func GetPosts(postingService service.PostingService) echo.HandlerFunc {
 		if !exists {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid prefecture name"})
 		}
+
 		groupIds := make([]model.GroupId, len(req.Groups))
 		for i, id := range req.Groups {
 			groupIds[i] = model.GroupId(id)
@@ -76,9 +77,20 @@ func GetPosts(postingService service.PostingService) echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		}
 
-		return c.JSON(http.StatusOK, posts)
+		response := model.GetPostsResponse{}
+		for _, post := range posts {
+			response.Posts = append(response.Posts, model.PostResponse{
+				PostId:    int(post.PostId),
+				Image:     post.Image,
+				Longitude: post.Longitude,
+				Latitude:  post.Latitude,
+			})
+		}
+
+		return c.JSON(http.StatusOK, response)
 	}
 }
+
 
 func GetPost(postingService service.PostingService, authService service.AuthService) echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -97,7 +109,7 @@ func GetPost(postingService service.PostingService, authService service.AuthServ
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to get user info"})
 		}
 
-		response := model.GetPostsResponse{
+		response := model.GetPostResponse{
 			UserName: user.UserName,
 			UserId:   post.UserId,
 			Image:    post.Image,
