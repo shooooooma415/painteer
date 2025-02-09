@@ -64,3 +64,8 @@ type GetGroupMembersResponse struct {
 type GetUserGroupResponse struct {
 	Groups []GroupSummary `json:"groups"`
 }
+
+type GetGroupResponse struct {
+    Name GroupName `json:"name"`
+    Icon string `json:"icon"`
+}

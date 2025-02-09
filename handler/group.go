@@ -113,3 +113,26 @@ func GetGroupMembers(groupService service.GroupService, authService service.Auth
 		return c.JSON(http.StatusOK, response)
 	}
 }
+
+func GetGroup(groupService service.GroupService) echo.HandlerFunc {
+    return func(c echo.Context) error {
+        groupIdStr := c.QueryParam("group_id")
+        groupId, err := strconv.Atoi(groupIdStr)
+        if err != nil {
+            return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid group_id"})
+        }
+
+        groupSummary, err := groupService.GetGroupSummaryByGroupID(model.GroupId(groupId))
+        if err != nil {
+            return c.JSON(http.StatusNotFound, map[string]string{"error": "Group not found"})
+        }
+
+        response := model.GetGroupResponse{
+            Name: groupSummary.GroupName,
+            Icon: groupSummary.Icon,
+        }
+
+        return c.JSON(http.StatusOK, response)
+    }
+}
+ 
