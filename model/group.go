@@ -52,3 +52,11 @@ type JoinGroup struct {
 	GroupId  GroupId
 	Password Password
 }
+
+type GetGroupMembersResponse struct {
+	Member []struct {
+		UserId   UserId      `json:"user_id"`
+		UserName UserName `json:"user_name"`
+		Icon     string   `json:"icon"`
+	} `json:"member"`
+}
