@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"painteer/model"
 	"painteer/service"
@@ -53,6 +54,29 @@ func JoinGroup(groupService service.GroupService) echo.HandlerFunc {
 		})
 	}
 }
+
+func GetUserGroup(groupService service.GroupService) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userIdStr := c.QueryParam("user_id")
+		userId, err := strconv.Atoi(userIdStr)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid user_id"})
+		}
+
+		userGroups, err := groupService.GetUserGroupSummaryByUserID(model.UserId(userId))
+		if err != nil {
+			return c.JSON(http.StatusNotFound, map[string]string{"error": "User groups not found"})
+		}
+
+		response := model.GetUserGroupResponse{
+			Groups: userGroups,
+		}
+
+		return c.JSON(http.StatusOK, response)
+	}
+}
+
+
 
 func GetGroupMembers(groupService service.GroupService, authService service.AuthService) echo.HandlerFunc {
 	return func(c echo.Context) error {
