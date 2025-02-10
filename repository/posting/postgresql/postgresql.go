@@ -113,6 +113,10 @@ func (q *PostRepositoryImpl) FindPostsByPrefectureIDAndGroupID(prefectureIDAndGr
 	}
 	defer rows.Close()
 
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("rows iteration error: %w", err)
+	}
+
 	var posts []model.Post
 	for rows.Next() {
 		var post model.Post
@@ -131,10 +135,5 @@ func (q *PostRepositoryImpl) FindPostsByPrefectureIDAndGroupID(prefectureIDAndGr
 		posts = append(posts, post)
 	}
 
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("rows iteration error: %w", err)
-	}
-
 	return posts, nil
 }
-
