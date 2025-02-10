@@ -18,3 +18,7 @@ type User struct {
 	AuthId   AuthId
 	UserId   UserId
 }
+
+type SignUpResponse struct {
+	UserId int `json:"user_id"`
+}

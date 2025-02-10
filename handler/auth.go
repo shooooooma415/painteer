@@ -21,7 +21,11 @@ func SignUp(authService service.AuthService) echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		}
 
-		return c.JSON(http.StatusOK, user)
+		response := model.SignUpResponse{
+			UserId: int(user.UserId),
+		}
+
+		return c.JSON(http.StatusOK, response)
 	}
 }
 
