@@ -100,5 +100,5 @@ func (s *GroupServiceImpl) GetGroupSummaryByGroupID(groupId model.GroupId) (*mod
 }
 
 func (s *GroupServiceImpl) RegisterPublicSetting(publicSetting model.PublicSetting) (*model.PublicSetting, error) {
-	return s.repo.CreatePublicSetting(publicSetting)
+	return s.repo.CreatePostPublicSetting(publicSetting)
 }

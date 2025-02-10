@@ -8,7 +8,7 @@ import (
 
 type PostingService interface {
 	CreatePost(uploadPost model.UploadPost) (*model.PostId, error)
-	DeletePost(postId model.PostId) (*model.PostId, error)
+	DeletePost(deletePost model.DeletePost) (*model.PostId, error)
 	GetPostByID(postId model.PostId) (*model.Post, error)
 	GetPostsByPrefectureIDAndGroupIDs(prefectureIDAndGroupIDs model.PrefectureIDAndGroupIDs) ([]model.Post, error)
 }
@@ -25,8 +25,8 @@ func (s *PostingsServiceImpl) CreatePost(uploadPost model.UploadPost) (*model.Po
 	return s.repo.CreatePost(uploadPost)
 }
 
-func (s *PostingsServiceImpl) DeletePost(postId model.PostId) (*model.PostId, error) {
-	return s.repo.DeletePost(postId)
+func (s *PostingsServiceImpl) DeletePost(deletePost model.DeletePost) (*model.PostId, error) {
+	return s.repo.DeletePost(deletePost)
 }
 
 func (s *PostingsServiceImpl) GetPostByID(postId model.PostId) (*model.Post, error) {
