@@ -7,9 +7,9 @@ type UserId int
 type AuthId string
 
 type CreateUser struct {
-	UserName UserName
-	Icon     string
-	AuthId   AuthId
+	UserName string `json:"name"`
+	Icon     string `json:"icon"`
+	AuthId   string `json:"auth_id"`
 }
 
 type User struct {
@@ -20,5 +20,5 @@ type User struct {
 }
 
 type SignUpResponse struct {
-	UserId int `json:"user_id"`
+	UserId UserId `json:"user_id"`
 }

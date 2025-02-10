@@ -3,6 +3,7 @@ package postgresql
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"painteer/model"
 )
 
@@ -22,7 +23,7 @@ func (q *AuthRepositoryImpl) CreateUser(createUser model.CreateUser) (*model.Use
 	`
 
 	var resultUser model.User
-
+	
 	err := q.db.QueryRow(
 		query,
 		createUser.UserName,

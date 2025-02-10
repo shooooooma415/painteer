@@ -22,7 +22,7 @@ func SignUp(authService service.AuthService) echo.HandlerFunc {
 		}
 
 		response := model.SignUpResponse{
-			UserId: int(user.UserId),
+			UserId: user.UserId,
 		}
 
 		return c.JSON(http.StatusOK, response)
@@ -35,8 +35,9 @@ func SignIn(authService service.AuthService) echo.HandlerFunc {
 		if authIdStr == "" {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Missing auth_id"})
 		}
+		authId := model.AuthId(authIdStr)
 
-		user, err := authService.AuthenticateUser(model.AuthId(authIdStr))
+		user, err := authService.AuthenticateUser(authId)
 		if err != nil {
 			return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Invalid credentials"})
 		}
