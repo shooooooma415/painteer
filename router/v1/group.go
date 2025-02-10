@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func InitPostingRoutes(e *echo.Echo, groupService service.GroupService, authService service.AuthService) {
+func InitGroupRoutes(e *echo.Echo, groupService service.GroupService, authService service.AuthService) {
 	e.POST("/group", handler.RegisterGroup(groupService))
 	e.PUT("/group/member", handler.JoinGroup(groupService))
 	e.GET("/group/user", handler.GetUserGroup(groupService))
