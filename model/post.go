@@ -31,13 +31,42 @@ type DeletePost struct {
 	UserId UserId
 }
 
-
-type PrefectureIDAndGroupID struct{
+type PrefectureIDAndGroupID struct {
 	PrefectureId PrefectureId
-	GroupId GroupId
+	GroupId      GroupId
 }
 
 type PrefectureIDAndGroupIDs struct {
 	PrefectureId PrefectureId
 	GroupIds     []GroupId
+}
+
+type UploadPostRequest struct {
+	Image        string    `json:"image"`
+	Date         time.Time `json:"date"`
+	Comment      string    `json:"comment"`
+	PrefectureId int       `json:"prefecture_id"`
+	Longitude    float64   `json:"longitude"`
+	Latitude     float64   `json:"latitude"`
+	UserId       int       `json:"user_id"`
+	Groups       []int     `json:"groups"`
+}
+
+type PostResponse struct {
+	PostId    int     `json:"post_id"`
+	Image     string  `json:"image"`
+	Longitude float64 `json:"longitude"`
+	Latitude  float64 `json:"latitude"`
+}
+
+type GetPostsResponse struct {
+	Posts []PostResponse `json:"posts"`
+}
+
+type GetPostResponse struct {
+	UserName UserName  `json:"user_name"`
+	UserId   UserId    `json:"user_id"`
+	Image    string    `json:"image"`
+	Comment  string    `json:"comment"`
+	Date     time.Time `json:"date"`
 }
