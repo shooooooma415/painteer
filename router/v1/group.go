@@ -8,9 +8,12 @@ import (
 )
 
 func InitGroupRoutes(e *echo.Echo, groupService service.GroupService, authService service.AuthService) {
-	e.POST("/group", handler.RegisterGroup(groupService))
-	e.PUT("/group/member", handler.JoinGroup(groupService))
-	e.GET("/group/user", handler.GetUserGroup(groupService))
-	e.GET("/group/member", handler.GetGroupMembers(groupService,authService))
-	e.GET("/group", handler.GetGroup(groupService))
+
+	e.Group("/group")
+
+	e.POST("/", handler.RegisterGroup(groupService))
+	e.PUT("/member", handler.JoinGroup(groupService))
+	e.GET("/user", handler.GetUserGroup(groupService))
+	e.GET("/member", handler.GetGroupMembers(groupService,authService))
+	e.GET("/", handler.GetGroup(groupService))
 }
