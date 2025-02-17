@@ -8,7 +8,9 @@ import (
 )
 
 func InitAuthRoutes(e *echo.Echo, authService service.AuthService) {
-	e.POST("/auth/signup", handler.SignUp(authService))
-	e.GET("/auth/signin", handler.SignIn(authService))
-	e.GET("/auth/profile", handler.GetUserByID(authService))
+	authGroup := e.Group("/auth")
+
+	authGroup.POST("/signup", handler.SignUp(authService))
+	authGroup.GET("/signin", handler.SignIn(authService))
+	authGroup.GET("/profile", handler.GetUserByID(authService))
 }
