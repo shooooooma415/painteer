@@ -12,7 +12,6 @@ type GroupService interface {
 	GetUserGroupSummaryByUserID(userId model.UserId) ([]model.GroupSummary, error)
 	GetGroupMembersByGroupID(groupId model.GroupId) (*model.GroupMembers, error)
 	GetGroupSummaryByGroupID(groupId model.GroupId) (*model.GroupSummary, error)
-	RegisterPublicSetting(publicSetting model.PublicSetting) (*model.PublicSetting, error)
 }
 
 type GroupServiceImpl struct {
@@ -97,8 +96,4 @@ func (s *GroupServiceImpl) GetGroupSummaryByGroupID(groupId model.GroupId) (*mod
 	}
 
 	return &GroupSummary, nil
-}
-
-func (s *GroupServiceImpl) RegisterPublicSetting(publicSetting model.PublicSetting) (*model.PublicSetting, error) {
-	return s.repo.CreatePostPublicSetting(publicSetting)
 }
