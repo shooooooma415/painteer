@@ -31,7 +31,7 @@ func UploadPost(postingService service.PostingService) echo.HandlerFunc {
 			groupIds[i] = model.GroupId(id)
 		}
 
-		createdPost, err := postingService.CreatePost(uploadPost, groupIds)
+		createdPost, err := postingService.CreatePost(uploadPost)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		}
