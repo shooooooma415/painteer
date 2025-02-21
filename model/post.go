@@ -70,3 +70,7 @@ type GetPostResponse struct {
 	Comment  string    `json:"comment"`
 	Date     time.Time `json:"date"`
 }
+
+type UploadPostResponse struct {
+	IsSuccess bool `json:"is_success"`
+}

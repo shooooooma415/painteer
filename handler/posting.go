@@ -31,15 +31,16 @@ func UploadPost(postingService service.PostingService) echo.HandlerFunc {
 			groupIds[i] = model.GroupId(id)
 		}
 
-		createdPost, err := postingService.CreatePost(uploadPost)
+		_, err := postingService.CreatePost(uploadPost)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		}
 
-		return c.JSON(http.StatusOK, map[string]interface{}{
-			"is_success": true,
-			"post_id":    *createdPost,
-		})
+        response:= model.UploadPostResponse{
+            IsSuccess: true,
+        }
+
+		return c.JSON(http.StatusOK, response)
 	}
 }
 
