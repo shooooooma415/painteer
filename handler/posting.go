@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"painteer/model"
 	"painteer/service"
@@ -10,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func UploadPost(postingService service.PostingService, groupService service.GroupService) echo.HandlerFunc {
+func UploadPost(postingService service.PostingService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var req model.UploadPostRequest
 		if err := c.Bind(&req); err != nil {
@@ -27,26 +26,19 @@ func UploadPost(postingService service.PostingService, groupService service.Grou
 			UserId:       model.UserId(req.UserId),
 		}
 
-		createdPost, err := postingService.CreatePost(uploadPost)
+		groupIds := make([]model.GroupId, len(req.Groups))
+		for i, id := range req.Groups {
+			groupIds[i] = model.GroupId(id)
+		}
+
+		createdPost, err := postingService.CreatePost(uploadPost, groupIds)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		}
 
-		for _, groupId := range req.Groups {
-			publicSetting := model.PublicSetting{
-				PostId:        *createdPost,
-				PublicGroupId: model.GroupId(groupId),
-			}
-
-			if _, err := groupService.RegisterPublicSetting(publicSetting); err != nil {
-				return c.JSON(http.StatusInternalServerError, map[string]string{
-					"error": fmt.Sprintf("Failed to set public setting for group %d", groupId),
-				})
-			}
-		}
-
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"is_success": true,
+			"post_id":    *createdPost,
 		})
 	}
 }

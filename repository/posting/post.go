@@ -8,7 +8,3 @@ type PostingsRepository interface {
 	FindPostByID(postId model.PostId) (*model.Post, error)
 	FindPostsByPrefectureIDAndGroupID(prefectureIDAndGroupID model.PrefectureIDAndGroupID) ([]model.Post, error)
 }
-
-func (p PostingsRepository) RegisterPublicSetting(publicSetting model.PublicSetting) (any, any) {
-	panic("unimplemented")
-}
