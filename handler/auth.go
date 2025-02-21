@@ -29,7 +29,11 @@ func SignUp(authService service.AuthService) echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, NewErrorResponse(err.Error()))
 		}
 
-		return c.JSON(http.StatusOK, user)
+		response := model.SignUpResponse{
+			UserId: user.UserId,
+		}
+
+		return c.JSON(http.StatusOK, response)
 	}
 }
 
@@ -45,7 +49,11 @@ func SignIn(authService service.AuthService) echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, NewErrorResponse(err.Error()))
 		}
 
-		return c.JSON(http.StatusOK, user)
+		response := model.SignInResponse{
+			UserId: user.UserId,
+		}
+
+		return c.JSON(http.StatusOK, response)
 	}
 }
 
@@ -62,6 +70,10 @@ func GetUserByID(authService service.AuthService) echo.HandlerFunc {
 			return c.JSON(http.StatusNotFound, NewErrorResponse(err.Error()))
 		}
 
-		return c.JSON(http.StatusOK, user)
+		response := model.GetUserByIDResponse{
+			Name: user.UserName,
+			Icon: user.Icon,
+		}
+		return c.JSON(http.StatusOK, response)
 	}
 }
