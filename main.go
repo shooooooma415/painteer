@@ -1,50 +1,40 @@
-package main
+// package main
 
-import (
-	"fmt"
-	"log"
-	"net/http"
-	"os"
+// import (
+// 	"log"
+// 	userPostgresql"painteer/repository/auth/postgresql"
+// 	postPostgresql"painteer/repository/posting/postgresql"
+// 	groupPostgresql"painteer/repository/group/postgresql"
 
-	"github.com/jmoiron/sqlx"
-	"github.com/joho/godotenv"
-	"github.com/labstack/echo/v4"
-	_ "github.com/lib/pq"
-)
+// 	"painteer/repository/utils"
+// 	"painteer/router/v1"
+// 	"painteer/service"
 
-func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
-	}
+// 	"github.com/labstack/echo/v4"
+// 	_ "github.com/lib/pq"
+// )
 
-	// 環境変数から接続情報を取得
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	dbname := os.Getenv("DB_NAME")
-	run_port := os.Getenv("RUN_PORT")
-	
-	// PostgreSQLの接続文字列を作成
-	dsn := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
-		host, port, user, password, dbname,
-	)
-	// データベース接続を初期化
-	db,err := sqlx.Connect("postgres", dsn)
-	if err != nil {
-		log.Fatalf("Failed to connect to Supabase: %v", err)
-	}
-	defer db.Close()
+// func main() {
+// 	e := echo.New()
 
-	log.Println("Successfully connected to Supabase!")
+// 	db, err := utils.ConnectDB()
+// 	if err != nil {
+// 		log.Fatalf("Failed to connect to the database: %v", err)
+// 	}
+// 	defer db.Close()
 
-	e := echo.New()
+// 	usersRepo := userPostgresql.NewAuthRepository(db)
+// 	postsRepo := postPostgresql.NewPostRepository(db)
+// 	groupsRepo := groupPostgresql.NewGroupRepository(db)
 
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, Echo!")
-	})
+// 	authService := service.NewAuthService(usersRepo)
+// 	postingService := service.NewPostingService(postsRepo)
+// 	groupService := service.NewGroupService(groupsRepo)
 
-	// サーバーを起動
-	e.Logger.Fatal(e.Start(run_port))
-}
+// 	v1.InitAuthRoutes(e, authService)
+// 	v1.InitGroupRoutes(e, groupService,authService)
+// 	v1.InitPostingRoutes(e,postingService,groupService,authService)
+
+// 	log.Println("Starting server on :8080...")
+// 	e.Logger.Fatal(e.Start(":8080"))
+// }

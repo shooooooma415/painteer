@@ -2,7 +2,6 @@ package utils
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -11,15 +10,62 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func findEnvFile() (string, error) {
+// ConnectDB establishes a connection to the database.
+func ConnectDB() (*sql.DB, error) {
+	// Load .env file only in local development
+	if os.Getenv("RENDER") == "" { // Assuming "RENDER" is set in the deployment environment
+		if err := loadEnvFile(); err != nil {
+			log.Printf("Warning: %v\n", err)
+		}
+	}
+
+	// Fetch database connection information from environment variables
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
+
+	// Validate the required environment variables
+	if host == "" || port == "" || user == "" || password == "" || dbname == "" {
+		return nil, fmt.Errorf("missing required database connection information in environment variables")
+	}
+
+	// Create the Data Source Name (DSN)
+	dsn := fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
+		host, port, user, password, dbname,
+	)
+
+	// Open the database connection
+	db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to the database: %w", err)
+	}
+
+	// Ping the database to verify the connection
+	if err := db.Ping(); err != nil {
+		return nil, fmt.Errorf("failed to ping the database: %w", err)
+	}
+
+	log.Println("Database connection successfully established.")
+	return db, nil
+}
+
+// loadEnvFile loads the .env file from the root directory or its parent directories.
+func loadEnvFile() error {
 	rootDir, err := os.Getwd()
 	if err != nil {
-		return "", fmt.Errorf("failed to get working directory: %v", err)
+		return fmt.Errorf("failed to get working directory: %v", err)
 	}
+
 	for {
-		envPath := filepath.Join(rootDir, ".env")
+		envPath := fmt.Sprintf("%s/.env", rootDir)
 		if _, err := os.Stat(envPath); err == nil {
-			return envPath, nil
+			if err := godotenv.Load(envPath); err != nil {
+				return fmt.Errorf("error loading .env file: %v", err)
+			}
+			return nil
 		}
 
 		parentDir := filepath.Dir(rootDir)
@@ -29,43 +75,5 @@ func findEnvFile() (string, error) {
 		rootDir = parentDir
 	}
 
-	return "", errors.New(".env file not found")
-}
-
-func ConnectDB() (*sql.DB, error) {
-	envPath, err := findEnvFile()
-	if err != nil {
-		return nil, fmt.Errorf("failed to locate .env file: %v", err)
-	}
-
-	if err := godotenv.Load(envPath); err != nil {
-		return nil, fmt.Errorf("error loading .env file: %v", err)
-	}
-
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	dbname := os.Getenv("DB_NAME")
-
-	if host == "" || port == "" || user == "" || password == "" || dbname == "" {
-		return nil, fmt.Errorf("missing required database connection information in environment variables")
-	}
-
-	dsn := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
-		host, port, user, password, dbname,
-	)
-
-	db, err := sql.Open("postgres", dsn)
-	if err != nil {
-		return nil, fmt.Errorf("failed to connect to the database: %w", err)
-	}
-
-	if err := db.Ping(); err != nil {
-		return nil, fmt.Errorf("failed to ping the database: %w", err)
-	}
-
-	log.Println("Database connection successfully established.")
-	return db, nil
+	return fmt.Errorf(".env file not found")
 }

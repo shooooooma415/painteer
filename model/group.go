@@ -21,11 +21,6 @@ type CreateGroup struct {
 	AuthorId  UserId
 }
 
-type PasswordAndName struct {
-	Password  Password
-	GroupName GroupName
-}
-
 type CreateUserGroup struct {
 	UserId  UserId
 	GroupId GroupId
@@ -46,6 +41,31 @@ type GroupMembers struct {
 	Members []UserId
 }
 
-type PasswordAndNames struct {
-	Groups []PasswordAndName
+type GroupSummary struct {
+	GroupId   GroupId
+	GroupName GroupName
+	Icon      string
+}
+
+type JoinGroup struct {
+	UserId   UserId
+	GroupId  GroupId
+	Password Password
+}
+
+type GetGroupMembersResponse struct {
+	Member []struct {
+		UserId   UserId   `json:"user_id"`
+		UserName UserName `json:"user_name"`
+		Icon     string   `json:"icon"`
+	} `json:"member"`
+}
+
+type GetUserGroupResponse struct {
+	Groups []GroupSummary `json:"groups"`
+}
+
+type GetGroupResponse struct {
+    Name GroupName `json:"name"`
+    Icon string `json:"icon"`
 }

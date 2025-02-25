@@ -14,16 +14,16 @@ func NewPostRepository(db *sql.DB) *PostRepositoryImpl {
 	return &PostRepositoryImpl{db: db}
 }
 
-func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.Post, error) {
+func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.PostId, error) {
 	query := `
 		INSERT INTO posts (
 				image, comment, prefecture_id, user_id, date, longitude, latitude
 			)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
-		RETURNING id, image, comment, prefecture_id, user_id, date, longitude, latitude
+		RETURNING id
 	`
 
-	var uploadedPost model.Post
+	var uploadedPost model.PostId
 	err := q.db.QueryRow(
 		query,
 		uploadPost.Image,
@@ -34,14 +34,7 @@ func (q *PostRepositoryImpl) CreatePost(uploadPost model.UploadPost) (*model.Pos
 		uploadPost.Longitude,
 		uploadPost.Latitude,
 	).Scan(
-		&uploadedPost.PostId,
-		&uploadedPost.Image,
-		&uploadedPost.Comment,
-		&uploadedPost.PrefectureId,
-		&uploadedPost.UserId,
-		&uploadedPost.Date,
-		&uploadedPost.Longitude,
-		&uploadedPost.Latitude,
+		&uploadedPost,
 	)
 
 	if err != nil {
@@ -113,6 +106,10 @@ func (q *PostRepositoryImpl) FindPostsByPrefectureIDAndGroupID(prefectureIDAndGr
 	}
 	defer rows.Close()
 
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("rows iteration error: %w", err)
+	}
+
 	var posts []model.Post
 	for rows.Next() {
 		var post model.Post
@@ -131,10 +128,5 @@ func (q *PostRepositoryImpl) FindPostsByPrefectureIDAndGroupID(prefectureIDAndGr
 		posts = append(posts, post)
 	}
 
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("rows iteration error: %w", err)
-	}
-
 	return posts, nil
 }
-

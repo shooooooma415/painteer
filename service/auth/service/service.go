@@ -5,12 +5,6 @@ import (
 	"painteer/repository/auth"
 )
 
-type AuthService interface {
-	RegisterUser(user model.CreateUser) (*model.User, error)
-	AuthenticateUser(authId model.AuthId) (*model.User, error)
-	GetUserByID(userId model.UserId) (*model.User, error)
-}
-
 type AuthServiceImpl struct {
 	repo auth.UsersRepository
 }
@@ -24,7 +18,7 @@ func (s *AuthServiceImpl) RegisterUser(user model.CreateUser) (*model.User, erro
 }
 
 func (s *AuthServiceImpl) AuthenticateUser(authId model.AuthId) (*model.User, error) {
-	return s.repo.FindUserByAuthID(authId)
+	return s.repo.SignInUser(authId)
 }
 
 func (s *AuthServiceImpl) GetUserByID(userId model.UserId) (*model.User, error) {
