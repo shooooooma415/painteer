@@ -8,6 +8,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type registerGroupResponse struct {
+	GroupID model.GroupId `json:"group_id"`
+}
+
 func RegisterGroup(groupService service.GroupService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var req model.CreateGroup
@@ -31,6 +35,7 @@ func RegisterGroup(groupService service.GroupService) echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, model.NewErrorResponse(err.Error()))
 		}
 
-		return c.JSON(http.StatusOK, joinedGroupId)
+		return c.JSON(http.StatusOK, registerGroupResponse{
+			GroupID: *joinedGroupId})
 	}
 }

@@ -9,6 +9,15 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type getGroupMembersResponse struct {
+	Member []struct {
+		UserId   model.UserId   `json:"user_id"`
+		UserName model.UserName `json:"user_name"`
+		Icon     string   `json:"icon"`
+	} `json:"member"`
+}
+
+
 func GetGroupMembers(groupService service.GroupService, authService service.AuthService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		groupIdStr := c.QueryParam("group_id")
@@ -22,7 +31,7 @@ func GetGroupMembers(groupService service.GroupService, authService service.Auth
 			return c.JSON(http.StatusNotFound, model.NewErrorResponse(err.Error()))
 		}
 
-		response := model.GetGroupMembersResponse{}
+		response := getGroupMembersResponse{}
 
 		for _, userId := range groupMembers.Members {
 			user, err := authService.GetUserByID(userId)

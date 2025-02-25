@@ -9,6 +9,12 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type getGroupResponse struct {
+    Name model.GroupName `json:"name"`
+    Icon string `json:"icon"`
+}
+
+
 func GetGroup(groupService service.GroupService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		groupIdStr := c.QueryParam("group_id")
@@ -22,7 +28,7 @@ func GetGroup(groupService service.GroupService) echo.HandlerFunc {
 			return c.JSON(http.StatusNotFound, model.NewErrorResponse(err.Error()))
 		}
 
-		response := model.GetGroupResponse{
+		response := getGroupResponse{
 			Name: groupSummary.GroupName,
 			Icon: groupSummary.Icon,
 		}

@@ -53,19 +53,4 @@ type JoinGroup struct {
 	Password Password
 }
 
-type GetGroupMembersResponse struct {
-	Member []struct {
-		UserId   UserId   `json:"user_id"`
-		UserName UserName `json:"user_name"`
-		Icon     string   `json:"icon"`
-	} `json:"member"`
-}
 
-type GetUserGroupResponse struct {
-	Groups []GroupSummary `json:"groups"`
-}
-
-type GetGroupResponse struct {
-    Name GroupName `json:"name"`
-    Icon string `json:"icon"`
-}

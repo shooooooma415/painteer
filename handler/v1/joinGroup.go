@@ -8,6 +8,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type joinGroupResponse struct {
+	GroupID model.GroupId `json:"group_id"`
+}
+
 func JoinGroup(groupService service.GroupService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var req model.JoinGroup
@@ -20,8 +24,8 @@ func JoinGroup(groupService service.GroupService) echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, model.NewErrorResponse(err.Error()))
 		}
 
-		return c.JSON(http.StatusOK, map[string]interface{}{
-			"group_id": joinedGroupId,
+		return c.JSON(http.StatusOK, joinGroupResponse{
+			GroupID: *joinedGroupId,
 		})
 	}
 }
