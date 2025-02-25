@@ -52,5 +52,3 @@ type JoinGroup struct {
 	GroupId  GroupId
 	Password Password
 }
-
-

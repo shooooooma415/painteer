@@ -18,14 +18,3 @@ type User struct {
 	AuthId   AuthId
 	UserId   UserId
 }
-
-
-
-type SignInResponse struct {
-	UserId UserId `json:"user_id"`
-}
-
-type GetUserByIDResponse struct {
-	Name UserName`json:"name"`
-	Icon string `json:"icon"`
-}

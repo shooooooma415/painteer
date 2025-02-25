@@ -8,6 +8,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type signInResponse struct {
+	UserId model.UserId `json:"user_id"`
+}
+
+
 func SignIn(authService service.AuthService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		authIdStr := c.QueryParam("auth_id")
@@ -20,7 +25,7 @@ func SignIn(authService service.AuthService) echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, model.NewErrorResponse(err.Error()))
 		}
 
-		response := model.SignInResponse{
+		response := signInResponse{
 			UserId: user.UserId,
 		}
 
