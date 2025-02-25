@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"painteer/model"
 	"painteer/repository/group"
-	post "painteer/repository/posting"
+	post "painteer/repository/post"
 )
 
 type PostingService interface {

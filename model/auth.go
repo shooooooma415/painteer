@@ -19,9 +19,7 @@ type User struct {
 	UserId   UserId
 }
 
-type SignUpResponse struct {
-	UserId UserId `json:"user_id"`
-}
+
 
 type SignInResponse struct {
 	UserId UserId `json:"user_id"`

@@ -17,25 +17,25 @@ func NewErrorResponse(message string) ErrorResponse {
 	return ErrorResponse{Error: message}
 }
 
-func SignUp(authService service.AuthService) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		var req model.CreateUser
-		if err := c.Bind(&req); err != nil {
-			return c.JSON(http.StatusBadRequest, NewErrorResponse(err.Error()))
-		}
+// func SignUp(authService service.AuthService) echo.HandlerFunc {
+// 	return func(c echo.Context) error {
+// 		var req model.CreateUser
+// 		if err := c.Bind(&req); err != nil {
+// 			return c.JSON(http.StatusBadRequest, NewErrorResponse(err.Error()))
+// 		}
 
-		user, err := authService.RegisterUser(req)
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, NewErrorResponse(err.Error()))
-		}
+// 		user, err := authService.RegisterUser(req)
+// 		if err != nil {
+// 			return c.JSON(http.StatusInternalServerError, NewErrorResponse(err.Error()))
+// 		}
 
-		response := model.SignUpResponse{
-			UserId: user.UserId,
-		}
+// 		response := model.SignUpResponse{
+// 			UserId: user.UserId,
+// 		}
 
-		return c.JSON(http.StatusOK, response)
-	}
-}
+// 		return c.JSON(http.StatusOK, response)
+// 	}
+// }
 
 func SignIn(authService service.AuthService) echo.HandlerFunc {
 	return func(c echo.Context) error {
