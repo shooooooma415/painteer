@@ -1,4 +1,4 @@
-package handler
+package v1
 
 import (
 	"net/http"
@@ -14,7 +14,7 @@ func GetUserByID(authService service.AuthService) echo.HandlerFunc {
 		userIdStr := c.QueryParam("user_id")
 		userId, err := strconv.Atoi(userIdStr)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, model.NewErrorResponse("user_id is required"))
+			return c.JSON(http.StatusBadRequest, model.NewErrorResponse(err.Error()))
 		}
 
 		user, err := authService.GetUserByID(model.UserId(userId))
