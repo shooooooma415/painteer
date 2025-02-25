@@ -55,23 +55,25 @@ func (s *PaintServiceImpl) CountPostIDsByRegion(groupIds []model.GroupId) ([]mod
 		return nil, fmt.Errorf("failed to count posts by prefecture: %w", err)
 	}
 
-	regionCounts := make(map[string]int)
-	for region := range model.RegionMap {
-		regionCounts[region] = 0 
-	}
-
-	for _, count := range prefectureCounts {
-		for region, prefectures := range model.RegionMap {
-			for _, prefName := range prefectures {
-				if count.Prefecture == prefName {
-					regionCounts[region] += count.PostCount
-					break
-				}
-			}
+	prefectureToRegion := make(map[string]string)
+	for region, prefectures := range model.RegionMap {
+		for _, prefectureName := range prefectures {
+			prefectureToRegion[prefectureName] = region
 		}
 	}
 
-	countsByRegion := make([]model.CountsByRegion, 0, len(model.RegionMap))
+	regionCounts := make(map[string]int)
+	for region := range model.RegionMap {
+		regionCounts[region] = 0
+	}
+
+	for _, count := range prefectureCounts {
+		if region, exists := prefectureToRegion[count.Prefecture]; exists {
+			regionCounts[region] += count.PostCount
+		}
+	}
+
+	countsByRegion := make([]model.CountsByRegion, 0, len(regionCounts))
 	for region, count := range regionCounts {
 		countsByRegion = append(countsByRegion, model.CountsByRegion{
 			Region:    region,
