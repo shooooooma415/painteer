@@ -4,13 +4,25 @@ import (
 	"net/http"
 	"painteer/model"
 	"painteer/service"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
 
+type uploadPostRequest struct {
+	Image        string    `json:"image"`
+	Date         time.Time `json:"date"`
+	Comment      string    `json:"comment"`
+	PrefectureId int       `json:"prefecture_id"`
+	Longitude    float64   `json:"longitude"`
+	Latitude     float64   `json:"latitude"`
+	UserId       int       `json:"user_id"`
+	Groups       []int     `json:"groups"`
+}
+
 func UploadPost(postingService service.PostingService) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var req model.UploadPostRequest
+		var req uploadPostRequest
 		if err := c.Bind(&req); err != nil {
 			return c.JSON(http.StatusBadRequest, model.NewErrorResponse(err.Error()))
 		}

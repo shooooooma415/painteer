@@ -9,6 +9,17 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type postResponse struct {
+	PostId    int     `json:"post_id"`
+	Image     string  `json:"image"`
+	Longitude float64 `json:"longitude"`
+	Latitude  float64 `json:"latitude"`
+}
+
+type getPostsResponse struct {
+	Posts []postResponse `json:"posts"`
+}
+
 func GetPosts(postingService service.PostingService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		prefectureName := c.QueryParam("prefecture_name")
@@ -37,9 +48,9 @@ func GetPosts(postingService service.PostingService) echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, model.NewErrorResponse(err.Error()))
 		}
 
-		response := model.GetPostsResponse{}
+		response := getPostsResponse{}
 		for _, post := range posts {
-			response.Posts = append(response.Posts, model.PostResponse{
+			response.Posts = append(response.Posts, postResponse{
 				PostId:    int(post.PostId),
 				Image:     post.Image,
 				Longitude: post.Longitude,
