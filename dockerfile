@@ -1,5 +1,5 @@
 # ビルドステージ
-FROM golang:1.20 AS builder
+FROM golang:1.20-bullseye AS builder
 WORKDIR /app
 
 # 依存解決
