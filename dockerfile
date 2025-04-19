@@ -8,7 +8,7 @@ RUN go mod download
 
 # ソースをコピーしてビルド
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o server .
+RUN CGO_ENABLED=0 GOOS=linux go build -o server .
 
 # 実行ステージ
 FROM gcr.io/distroless/base
