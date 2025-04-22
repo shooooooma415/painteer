@@ -2,12 +2,14 @@ package main
 
 import (
 	"log"
-	userPostgresql"painteer/repository/auth/postgresql"
+	"os"
+	userPostgresql "painteer/repository/auth/postgresql"
+
 	// postPostgresql"painteer/repository/post/postgresql"
-	groupPostgresql"painteer/repository/group/postgresql"
+	groupPostgresql "painteer/repository/group/postgresql"
 
 	"painteer/repository/utils"
-	"painteer/router/v1"
+	v1 "painteer/router/v1"
 	"painteer/service"
 
 	"github.com/labstack/echo/v4"
@@ -32,9 +34,11 @@ func main() {
 	groupService := service.NewGroupService(groupsRepo)
 
 	v1.InitAuthRoutes(e, authService)
-	v1.InitGroupRoutes(e, groupService,authService)
+	v1.InitGroupRoutes(e, groupService, authService)
 	// v1.InitPostingRoutes(e,postingService,groupService,authService)
 
-	log.Println("Starting server on :8080...")
-	e.Logger.Fatal(e.Start(":8080"))
+	port := os.Getenv("RUN_PORT")
+
+	log.Printf("Starting server on :%s...", port)
+	e.Logger.Fatal(e.Start(":" + port))
 }

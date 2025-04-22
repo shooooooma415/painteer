@@ -20,11 +20,11 @@ func ConnectDB() (*sql.DB, error) {
 	}
 
 	// Fetch database connection information from environment variables
-	host := os.Getenv("POSTGRES_HOST")
-	port := os.Getenv("POSTGRES_PORT")
-	user := os.Getenv("POSTGRES_USER")
-	password := os.Getenv("POSTGRES_PASSWORD")
-	dbname := os.Getenv("POSTGRES_DB")
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
 
 	// Validate the required environment variables
 	if host == "" || port == "" || user == "" || password == "" || dbname == "" {
