@@ -33,7 +33,7 @@ func ConnectDB() (*sql.DB, error) {
 
 	// Create the Data Source Name (DSN)
 	dsn := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname,
 	)
 

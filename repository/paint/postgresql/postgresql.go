@@ -47,4 +47,3 @@ func (q *PaintRepositoryImpl) FindPostIDsByPrefecture(groupId model.GroupId) ([]
 
 	return result, nil
 }
-

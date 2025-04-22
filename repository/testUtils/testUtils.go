@@ -61,3 +61,4 @@ func CreateUserAndGroupForTest(
 
 	return createdUser, createdGroup, nil
 }
+
